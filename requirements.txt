@@ -1,0 +1,17 @@
+# Aquarius play 2 -- inference dependencies
+#
+# 1) Install the cu128 build of torch FIRST (do not let pip pick on its own,
+#    otherwise you get the CPU-only wheel):
+#      pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
+# 2) Then install the rest:
+#      pip install -r requirements.txt
+transformers>=5.0
+diffusers>=0.40
+safetensors
+einops
+numpy
+Pillow
+# Only needed by the web UI in app.py; skip it if you only use the aq_play.py CLI.
+# Installing gradio is purely additive: it will not upgrade or downgrade
+# torch, transformers, diffusers, numpy or Pillow.
+gradio>=5.0

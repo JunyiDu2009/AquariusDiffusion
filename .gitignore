@@ -1,0 +1,29 @@
+# ---- weights: download from GitHub Releases (see README / RELEASE.md) ----
+# The sidecar files in text_encoder/ ARE tracked; only the big binaries are not.
+text_encoder/*.safetensors
+VAE/*.safetensors
+diffusion_model/*.safetensors
+portable/*.safetensors
+*.pt
+*.pth
+*.ckpt
+
+# ---- training / inference outputs ----
+outputs/
+samples/
+_t_dump/
+*.png.tmp
+*.log
+
+# ---- python ----
+__pycache__/
+*.py[cod]
+*$py.class
+.venv/
+venv/
+.ipynb_checkpoints/
+
+# ---- os / editor ----
+Thumbs.db
+Desktop.ini
+.DS_Store

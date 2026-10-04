@@ -1,0 +1,85 @@
+{
+  "stages": [
+    {
+      "step": 40000,
+      "baseline": "_t_dump/stage40000_baseline",
+      "coco": "_t_dump/stage40000_terimage_640x640"
+    },
+    {
+      "step": 110000,
+      "baseline": "_t_dump/stage110000_baseline",
+      "coco": "_t_dump/stage110000_terimage_640x640"
+    },
+    {
+      "step": 120000,
+      "baseline": "_t_dump/stage120000_baseline",
+      "coco": "_t_dump/stage120000_terimage_640x640"
+    },
+    {
+      "step": 130000,
+      "baseline": "_t_dump/stage130000_baseline",
+      "coco": "_t_dump/stage130000_terimage_640x640"
+    },
+    {
+      "step": 140000,
+      "baseline": null,
+      "coco": "_t_dump/stage140000_terimage_640x640"
+    },
+    {
+      "step": 9058,
+      "baseline": null,
+      "coco": "_t_dump/stage9058_terimage_640x640"
+    },
+    {
+      "step": 150000,
+      "baseline": null,
+      "coco": "_t_dump/stage150000_terimage_640x640"
+    },
+    {
+      "step": 160000,
+      "baseline": null,
+      "coco": "_t_dump/stage160000_terimage_640x640"
+    },
+    {
+      "step": 170000,
+      "baseline": null,
+      "coco": "_t_dump/stage170000_terimage_640x640"
+    },
+    {
+      "step": 180000,
+      "baseline": null,
+      "coco": "_t_dump/stage180000_terimage_640x640"
+    },
+    {
+      "step": 190000,
+      "baseline": null,
+      "coco": "_t_dump/stage190000_terimage_640x640"
+    },
+    {
+      "step": 200000,
+      "baseline": null,
+      "coco": "_t_dump/stage200000_terimage_640x640"
+    },
+    {
+      "step": 210000,
+      "baseline": null,
+      "coco": "_t_dump/stage210000_terimage_640x640"
+    },
+    {
+      "step": 220000,
+      "baseline": null,
+      "coco": "_t_dump/stage220000_terimage_640x640"
+    },
+    {
+      "step": 230000,
+      "baseline": null,
+      "coco": "_t_dump/stage230000_terimage_640x640"
+    },
+    {
+      "step": 240000,
+      "baseline": null,
+      "coco": "_t_dump/stage240000_terimage_640x640"
+    }
+  ],
+  "更新": "2026-10-04 12:32:53"
+}

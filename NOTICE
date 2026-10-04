@@ -1,0 +1,30 @@
+AquariusImage
+Part of the AquariusDiffusion series (native low-bit text-to-image diffusion)
+Copyright 2026 Junyi Du
+
+This product includes components developed by third parties, each used under
+its own license:
+
+* Text encoder
+  Derived from Qwen3.5-0.8B (language tower, int8-quantized), copyright and
+  license terms of its upstream project apply.
+
+* VAE
+  Stable Diffusion 1.5 VAE weights (fp16). CreativeML Open RAIL-M terms apply.
+
+* UNet
+  Structurally isomorphic to Stable Diffusion 1.5 (Stability AI); trained from
+  scratch in this project. Upstream license terms of SD1.5 apply to the
+  architectural derivative.
+
+* Training data
+  COCO train2017 (COCO Consortium). COCO terms apply.
+
+* AI assistance
+  Implementation, data analysis and report drafting were carried out in
+  collaboration with the GLM-5.3-Flash (Zhipu Z.ai) and DeepSeek V4.1 Flash
+  (DeepSeek AI) large language models.
+
+The model weight files are distributed via GitHub Releases for research
+reproducibility. Check each component's own license before redistributing the
+weights. See LICENSE for the license of this repository's code and docs.
