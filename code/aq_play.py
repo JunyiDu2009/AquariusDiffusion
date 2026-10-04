@@ -355,8 +355,11 @@ def _step_of(p):
 
 
 def default_ckpt():
-    """Default model file: **prefer the packed delivery model** (int4 or 2-bit),
-    then fall back to an fp16 slim checkpoint, then a full checkpoint.
+    """Default model file: **prefer the packed delivery model** -- the prebuilt runtime
+    int4 (`diffusion_model/`) when it is there, otherwise the base-3 **master**
+    (`portable/`), from which the runtime kernel is **rebuilt at load time, per
+    device** (int4 fused kernel on CUDA, unpack-to-float elsewhere) -- then fall back
+    to an fp16 slim checkpoint, then a full checkpoint.
 
     There may be **several exports at different steps**
     (`..._step40000.safetensors`, `..._step50000.safetensors`, ...); this
@@ -369,13 +372,18 @@ def default_ckpt():
     uses the packed model while the command line uses a 1 GB checkpoint".
     """
     cands = []
-    for d in (HERE / "model", CKPT_DIR):
+    # Priority order: prebuilt runtime int4 first (zero-conversion load), then the
+    # base-3 master -- from which the runtime kernel is rebuilt at load time, per
+    # device.  The **first folder that actually holds an export wins**, so a package
+    # shipping only `portable/` works out of the box.
+    for d in (HERE / "diffusion_model", HERE / "portable", HERE / "model", CKPT_DIR):
         if d.is_dir():
-            cands += list(d.glob("*.safetensors"))
+            found = [p for p in d.glob("*.safetensors") if _step_of(p) > 0]
+            if found:
+                cands = found
+                break
     if cands:
-        newest = max(cands, key=_step_of)
-        if _step_of(newest) > 0:
-            return newest
+        return max(cands, key=_step_of)
     for cand in (CKPT_DIR / "latest.pt", CKPT_DIR / "final.pt"):
         if cand.is_file():
             return cand
@@ -766,8 +774,8 @@ class Engine:
         if not self.ckpt.is_file():
             raise FileNotFoundError(
                 f"model file not found: {self.ckpt}\n"
-                f"(expected a packed model in diffusion_model/, or a checkpoint in "
-                f"checkpoints/ternary/latest.pt)")
+                f"(expected a packed model in diffusion_model/ or portable/, or a "
+                f"checkpoint in checkpoints/ternary/latest.pt)")
 
         self.abar = cosine_schedule()
         self._unet = None
@@ -1064,7 +1072,8 @@ def main():
     ckpt = Path(args.ckpt) if args.ckpt else default_ckpt()
     if not ckpt.is_file():
         print(f"[abort] model file not found: {ckpt}")
-        print(f"        expected diffusion_model/*.safetensors or {CKPT_DIR}/latest.pt")
+        print(f"        expected diffusion_model/*.safetensors or portable/*.safetensors,"
+              f" or {CKPT_DIR}/latest.pt")
         return 2
 
     if args.device == "cpu":

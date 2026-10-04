@@ -85,8 +85,9 @@ AquariusTerimage/
 └── README.md
 ```
 
-The `text_encoder/` sidecars + the three empty weight folders are where the four Release
-files go: drop each file into the same-named folder and everything runs out of the box.
+The `text_encoder/` sidecars + the three empty weight folders are where the three Release
+weight files go: drop each file into the same-named folder and everything runs out of the
+box (the loader rebuilds the int4 runtime kernel from `portable/` at load time).
 
 ## Quick start
 
@@ -99,7 +100,7 @@ pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 ```
 
-Download the four weight files from **Releases** (see the table below) into their folders, then:
+Download the three weight files from **Releases** (see the table below) into their folders, then:
 
 | Windows | macOS / Linux |
 |---|---|
@@ -122,18 +123,23 @@ The text encoder keeps its weights in int8 and reconstructs them in the quantize
 space — `transformers.from_pretrained` cannot read that file, which is why
 `code/load_te.py` exists (already wired into `app.py` / `aq_play.py`).
 
-### Weights — four files, straight from Releases (no archive)
+### Weights — three files, straight from Releases (no archive)
 
 | Release asset | Size | Put it in |
 |---|---|---|
-| `aquarius_ternary_step260000_base3.safetensors` (base-3 master, portable) | 152.99 MB | `portable/` |
-| `diffusion_model_step260000.safetensors` (int4 CUDA runtime) | 323.48 MB | `diffusion_model/` |
+| `aquarius_ternary_step260000_base3.safetensors` (base-3 master) | 152.99 MB | `portable/` |
 | `model_int8.safetensors` (text encoder, Qwen3.5-0.8B language tower, int8) | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors` (SD1.5 VAE, fp16) | 334.64 MB | `VAE/` |
 | `sha256sums.txt` | < 1 KB | — verify with `sha256sum -c` |
 
-Nothing to unpack: the Gradio UI (`code/app.py`, `code/run_ui.bat`) and the text-encoder
-tokenizer/config sidecars already live in this repository.
+The **fourth** model file you may have seen elsewhere — `diffusion_model_step260000.safetensors`
+(prebuilt int4 runtime, 323 MB) — is **deliberately not shipped**: it is only a convenience
+snapshot of what the loader rebuilds from the base-3 master **at load time, for whatever
+device you have** (int4 fused kernel on an NVIDIA GPU, unpack-to-float elsewhere). Put the
+three files above in place and run — no flags needed.
+
+The release page also carries the Gradio UI, the Windows launcher and the text-encoder
+sidecars as loose files, so the download runs without cloning this repository.
 
 > **Mirror:** the same four files are also being published on **Hugging Face**; the HF
 > link will be added here once live. This README stays the canonical index of download links.

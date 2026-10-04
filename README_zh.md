@@ -81,8 +81,8 @@ AquariusTerimage/
 └── README.md
 ```
 
-`text_encoder/` 伴生文件 + 三个空权重文件夹就是 Release 里四个权重文件的落位：
-把每个文件放进同名文件夹，即可开箱即用（界面与脚本本仓库已自带）。
+`text_encoder/` 伴生文件 + 三个空权重文件夹就是 Release 里**三个**权重文件的落位：
+把每个文件放进同名文件夹即可开箱即用（int4 运行时会由加载器从 `portable/` 按设备重建）。
 
 ## 快速开始
 
@@ -94,7 +94,7 @@ pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 ```
 
-从 **Releases** 下载四个权重文件（见下表）放进对应文件夹，然后：
+从 **Releases** 下载三个权重文件（见下表）放进对应文件夹，然后：
 
 | Windows | macOS / Linux |
 |---|---|
@@ -116,18 +116,22 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 文本编码器权重以 int8 形态存储、在量化空间内重建 —— `transformers.from_pretrained`
 读不了这个文件，所以才有 `code/load_te.py`（已接进 `app.py` / `aq_play.py`，无需额外操作）。
 
-### 权重下载 —— Releases 上的四个文件（无压缩包）
+### 权重下载 —— Releases 上的三个文件（无压缩包）
 
 | Release 资产 | 体积 | 放到 |
 |---|---|---|
-| `aquarius_ternary_step260000_base3.safetensors`（base-3 母版，跨平台） | 152.99 MB | `portable/` |
-| `diffusion_model_step260000.safetensors`（int4 CUDA 运行时） | 323.48 MB | `diffusion_model/` |
+| `aquarius_ternary_step260000_base3.safetensors`（base-3 母版） | 152.99 MB | `portable/` |
 | `model_int8.safetensors`（文本编码器，Qwen3.5-0.8B 语言塔，int8） | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors`（SD1.5 VAE，fp16） | 334.64 MB | `VAE/` |
 | `sha256sums.txt` | < 1 KB | —— 用 `sha256sum -c` 校验 |
 
-无需解压：Gradio 界面（`code/app.py`、`code/run_ui.bat`）与文本编码器的
-tokenizer/配置伴生文件都已在本仓库内。
+你可能在别处见过的**第四个**模型文件 `diffusion_model_step260000.safetensors`
+（预建 int4 运行时，323 MB）**刻意不随包发布**：它只是加载器**在载入时按你的设备**从
+base-3 母版重建出来的那份（NVIDIA GPU 上是 int4 融合内核，其他设备解包为浮点）的
+现成快照。把上表三个文件放好即可运行，**不需要任何额外参数**。
+
+Release 页同时提供 Gradio 界面、Windows 启动器与文本编码器伴生文件（散文件），
+因此不克隆本仓库也能直接跑。
 
 > **镜像**：同一组权重文件也会发布在 **Hugging Face**；HF 链接上传完成后更新在这里。
 > 本 README 始终是下载链接的权威出处。
