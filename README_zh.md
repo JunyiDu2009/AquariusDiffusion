@@ -1,6 +1,6 @@
 # Aquarius —— 从零开始的原生三值文生图扩散模型
 
-**原生低比特训练（NLT）** · 558,347,012 参数 · **152.99 MB** 单文件模型（2.190 bpw）· 附完整技术报告
+**原生低比特训练（NLT）** · 558,347,012 参数 · **152.99 MB** 单文件模型（2.192 bpw）· 附完整技术报告
 
 [English](README.md) | 中文
 
@@ -39,7 +39,7 @@
 | 参数量 | 558,347,012（其中 540,147,712 个三值量化；其余保持 fp16） |
 | 量化器 | 三值 `{−s, 0, +s}`，每 128 权重一个 fp16 scale（g128 mean-scale）+ STE |
 | 训练 | 260,000 步 = 28.70 轮，COCO train2017（11.8 万条 caption，22 个长宽比桶），单卡 32 GB |
-| 交付件 | **152.99 MB** 单文件，**2.190 bpw** —— base-3 打包，贴近 `log₂3 ≈ 1.585` bit 信息下限 |
+| 交付件 | **152.99 MB** 单文件，**2.192 bpw** —— base-3 打包，贴近 `log₂3 ≈ 1.585` bit 信息下限 |
 | 相对 fp16 | **7.3×** 缩小（fp16 权重 = 1116.73 MB） |
 | 推理权重 | int4 融合内核，**比特级无损**，常驻 **287.3 MB** |
 | 速度（RTX 5090，512×512，20 步） | 1.34–1.44 s/图（三模型常驻，峰值 **1.92 GB**）· `--te-mode cache` 时 2.27–2.51 s/图（峰值 1.34 GB） |
@@ -52,13 +52,13 @@
 </p>
 
 <p>
-  <img src="figures/zh/fig7_samples.png" width="49%" alt="样例" />
+  <img src="figures/zh/fig4_samples.png" width="49%" alt="样例" />
   <img src="figures/ui_screenshot.png" width="49%" alt="演示界面" />
 </p>
 
-模型进化对照条（18 个训练阶段，固定 10 条 caption 协议 —— 仅在同协议内可比）：
+模型进化对照条（16 个阶段，固定 10 条 caption 协议，较早协议 —— 仅在同协议内可比）：
 
-<p><img src="figures/zh/fig8_evolution.png" width="100%" alt="进化对照条" /></p>
+<p><img src="figures/zh/fig5_evolution.png" width="100%" alt="进化对照条" /></p>
 
 100 条随机 caption @ 640×640 出图网格：[figures/samples_100captions_web.png](figures/samples_100captions_web.png)
 
@@ -122,6 +122,9 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 | `diffusion_model_step260000.safetensors`（int4 CUDA 运行时） | 323.48 MB | `diffusion_model/` |
 | `model_int8.safetensors`（文本编码器，Qwen3.5-0.8B 语言塔，int8） | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors`（SD1.5 VAE，fp16） | 334.64 MB | `VAE/` |
+
+> **镜像**：同一组权重文件也会发布在 **Hugging Face**；HF 模型卡链接上传完成后更新在这里。
+> 本 README 始终是下载链接的权威出处。
 
 > 不要把 base-3 母版丢进 `diffusion_model/` —— 该目录按「最高步数」glob 选模型，
 > 同步数会造成歧义。请用 `--ckpt` 显式指定。

@@ -22,6 +22,23 @@ D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/text_encoder/mod
 D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/VAE/VAE.safetensors
 ```
 
+## Local staging — READY TO UPLOAD (prepared 2026-10-04)
+
+`D:/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/` contains everything
+the release needs, already sha256-verified against the archive originals:
+
+- the four weight files (exact byte sizes as in the table above)
+- `sha256sums.txt` — publish as a **5th asset** so users can verify downloads
+- `release_notes.md` — use as the `--notes-file` for the release
+- `upload_release.sh` — one-shot: creates tag v1.0 + uploads all 5 assets
+  (retry-safe, `--clobber` on re-run; needs `gh` authenticated)
+
+After the repo is pushed, run:
+
+```
+bash /d/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/upload_release.sh
+```
+
 ## Suggested release commands
 
 ```bash

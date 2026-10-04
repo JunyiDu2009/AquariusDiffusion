@@ -1,6 +1,6 @@
 # Aquarius — A From-Scratch Natively Ternary Text-to-Image Diffusion Model
 
-**Native Low-bit Training (NLT)** · 558,347,012 params · **152.99 MB** single-file model (2.190 bpw) · full technical report included
+**Native Low-bit Training (NLT)** · 558,347,012 params · **152.99 MB** single-file model (2.192 bpw) · full technical report included
 
 English | [中文说明](README_zh.md)
 
@@ -42,7 +42,7 @@ Two conclusions, both honest:
 | Parameters | 558,347,012 (540,147,712 ternary-quantized; rest kept fp16) |
 | Quantizer | ternary `{−s, 0, +s}`, one fp16 scale per 128 weights (g128 mean-scale) + STE |
 | Training | 260,000 steps = 28.70 epochs, COCO train2017 (118k captions, 22 aspect-ratio buckets), single 32 GB GPU |
-| Deliverable | **152.99 MB** single file, **2.190 bpw** — base-3 packing at the `log₂3 ≈ 1.585` bit floor |
+| Deliverable | **152.99 MB** single file, **2.192 bpw** — base-3 packing at the `log₂3 ≈ 1.585` bit floor |
 | vs fp16 | **7.3×** smaller (fp16 weights = 1116.73 MB) |
 | Runtime weights | int4 fused kernel, **bit-exact**, resident **287.3 MB** |
 | Speed (RTX 5090, 512×512, 20 steps) | 1.34–1.44 s/image (all models resident, peak **1.92 GB**) · 2.27–2.51 s/image with `--te-mode cache` (peak 1.34 GB) |
@@ -55,13 +55,13 @@ Two conclusions, both honest:
 </p>
 
 <p>
-  <img src="figures/en/fig7_samples.png" width="49%" alt="samples" />
+  <img src="figures/en/fig4_samples.png" width="49%" alt="samples" />
   <img src="figures/ui_screenshot.png" width="49%" alt="demo UI" />
 </p>
 
-Evolution strip (18 training stages, fixed 10-caption protocol — only comparable within the protocol):
+Evolution strip (16 stages, fixed 10-caption protocol, earlier protocol — only comparable within it):
 
-<p><img src="figures/en/fig8_evolution.png" width="100%" alt="evolution strip" /></p>
+<p><img src="figures/en/fig5_evolution.png" width="100%" alt="evolution strip" /></p>
 
 100 random captions at 640×640: [figures/samples_100captions_web.png](figures/samples_100captions_web.png)
 
@@ -128,6 +128,10 @@ space — `transformers.from_pretrained` cannot read that file, which is why
 | `diffusion_model_step260000.safetensors` (int4 CUDA runtime) | 323.48 MB | `diffusion_model/` |
 | `model_int8.safetensors` (text encoder, Qwen3.5-0.8B language tower, int8) | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors` (SD1.5 VAE, fp16) | 334.64 MB | `VAE/` |
+
+> **Mirror:** the same four files are also being published on **Hugging Face**; the
+> HF model-card link will be added here once live. This README stays the canonical
+> index of download links.
 
 > Do **not** drop the base-3 master into `diffusion_model/` — that folder is globbed
 > and the "highest step" tie would make model selection ambiguous. Use `--ckpt` instead.

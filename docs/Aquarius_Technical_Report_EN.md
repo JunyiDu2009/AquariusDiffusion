@@ -7,7 +7,7 @@
 Author: Junyi Du (independent research)
 Affiliation: Independent Researcher
 Date: 2026-10-04
-Code and models: see §8 (Reproduction)
+Code and models: see §9 (Reproduction)
 AI assistance: GLM-5.3-Flash & DeepSeek V4.1 Flash (see Acknowledgements)
 
 > **Version note.** This report corresponds to the **final checkpoint at step 260,000
@@ -31,7 +31,7 @@ diagnosed and fixed.
 
 For **delivery**, we pack the ternary codes at the information floor of
 `log₂3 ≈ 1.585 bit` using base-3 packing, yielding a single-file model of
-**152.99 MB (2.190 bpw)** — about **7.3×** smaller than the fp16 weights
+**152.99 MB (2.192 bpw)** — about **7.3×** smaller than the fp16 weights
 (1116.73 MB). For **inference**, we give a **bit-exact** mapping from ternary onto
 torch's built-in `_weight_int4pack_mm` (`q₄ = q·7 + 8 ∈ {1, 8, 15}`), so the weights
 stay resident at **287.3 MB**
@@ -72,8 +72,8 @@ This report answers three questions.
 2. **Does low-bit fused-kernel inference work?** Yes. Using a torch built-in operator we
    place ternary **bit-exactly** into int4, keep the weights resident at 287.3 MB, and
    fuse unpacking into the GEMM (§3.5, §5.4). The deliverable is
-   **152.99 MB** and produces images end-to-end on a real GPU with a peak of only
-   **1.34 GB** of allocated VRAM.
+   **152.99 MB** and produces images end-to-end on a real GPU (all three models resident: peak **1.92 GB**,
+   **1.34–1.44 s** per image, §5.7).
 3. **Is the resulting model usable?** **No.** This is the most important negative result
    here. All of clip_ratio's rise happens between steps 9k and 110k; the **net change
    ≈ 0 over the following 130k steps** — about half of all steps run — and the all-time
@@ -120,7 +120,7 @@ whereas we ship only the small one (§6 discusses the trade-off).
 
 ### 3.1 Overview
 
-![Figure 1](report/figures/en/fig1_pipeline.png)
+![Figure 1](../figures/en/fig1_pipeline.png)
 
 **Figure 1.** Inference pipeline and the training-side quantizer/packing path. The text
 encoder and the VAE are frozen throughout; only the UNet is trained, and only the UNet
@@ -159,10 +159,10 @@ no negative-prompt or guidance-scale degrees of freedom.
 ### 3.4 base-3 bit packing
 
 Ternary has only three states, so the **theoretical floor is log₂3 = 1.585 bit**; storing
-2 bit per weight wastes 26% of the codes. Because `3⁵ = 243 ≤ 256`, **five ternary codes
+2 bits per weight costs about 26% more storage than the floor (2 / 1.585 ≈ 1.26). Because `3⁵ = 243 ≤ 256`, **five ternary codes
 fit losslessly into one byte**. We carry the trained `(codes, group scale)` over
 unchanged (**never re-quantize** — see §3.6) and pack in base-3, yielding a deliverable of
-**152.99 MB / 2.190 bpw**.
+**152.99 MB / 2.192 bpw**.
 
 ### 3.5 Fused int4 inference kernel
 
@@ -231,7 +231,7 @@ structural constraint, not a tunable).
 
 ### 5.1 Training stability
 
-![Figure 2](report/figures/en/fig2_training.png)
+![Figure 2](../figures/en/fig2_training.png)
 
 **Figure 2.** Training panorama. Loss holds at 0.205–0.215; `act` (canary activation)
 stays inside the healthy band 2×10²–6×10²; the learning rate anneals smoothly.
@@ -249,7 +249,7 @@ the checkpoint's `base_lrs` on resume**. **No recurrence in the 190k steps since
 
 ### 5.2 Quality
 
-![Figure 3](report/figures/en/fig3_clip_ratio.png)
+![Figure 3](../figures/en/fig3_clip_ratio.png)
 
 **Figure 3.** The full clip_ratio series (16 stages).
 
@@ -262,9 +262,9 @@ The entire rise happens between **step 9k and 110k**. Over the next 130k steps (
 half of everything run) the **net change ≈ 0**; the peak of 0.3782 occurs at step 170k and
 thereafter oscillates between 0.29 and 0.34.
 
-![Figure 7](report/figures/en/fig7_samples.png)
+![Figure 4](../figures/en/fig4_samples.png)
 
-**Figure 7.** Real outputs from the delivered package on a local GPU (512×512, 20 DDIM
+**Figure 4.** Real outputs from the delivered package on a local GPU (512×512, 20 DDIM
 steps, latent vectors not clamped).
 
 ⚠️ **A previous reading that must be corrected.** Early on, under a
@@ -281,17 +281,17 @@ The corrected reading is therefore: **"below a usable release bar" still stands*
 (only 1 of 4 captions truly produced a recognizable subject, on a sample of 4 images ×
 1 seed), but **"structural learning has taken place" is now firmly established**.
 
-![Figure 8](report/figures/en/fig8_evolution.png)
+![Figure 5](../figures/en/fig5_evolution.png)
 
-**Figure 8.** Stage strip (10 fixed COCO captions, 640×640, seed 100000+i).
+**Figure 5.** Stage strip (10 fixed COCO captions, 640×640, seed 100000+i).
 **Note: this strip uses the earlier protocol (with latent clamping), so it is only valid
 for relative comparisons between stages.**
 
 ### 5.3 Quantization cost
 
-![Figure 4](report/figures/en/fig4_modes.png)
+![Figure 6](../figures/en/fig6_modes.png)
 
-**Figure 4.** The three weight modes at step 40,000, same recipe and data.
+**Figure 6.** The three weight modes at step 40,000, same recipe and data.
 
 | Mode | clip_ratio @40k | Deliverable size |
 |---|---|---|
@@ -305,9 +305,9 @@ full-precision reference**. At this scale (558M parameters) and data budget,
 
 ### 5.4 Efficiency: bandwidth, memory, latency
 
-![Figure 5](report/figures/en/fig5_bitwidth.png)
+![Figure 7](../figures/en/fig7_bitwidth.png)
 
-**Figure 5.** Bytes per parameter per forward pass and resident footprint.
+**Figure 7.** Bytes per parameter per forward pass and resident footprint.
 
 | Scheme | Bytes/param/forward | Resident |
 |---|---|---|
@@ -320,25 +320,26 @@ full-precision reference**. At this scale (558M parameters) and data budget,
 > **Note that `int8 resident, unfused` reads 5 B per parameter — worse than bf16.** Only
 > when the unpacked weights go straight into the multiplier does bandwidth actually drop.
 
-![Figure 6](report/figures/en/fig6_optim.png)
+![Figure 8](../figures/en/fig8_optim.png)
 
-**Figure 6.** Three memory/latency optimizations. Building directly from the packed file
+**Figure 8.** Three memory/latency optimizations. Building directly from the packed file
 drops the model-build peak from **1158 to 362 MB (−68.7%)** and 9.0 to 3.3 s, with
 **pixel-identical output (L1 = 0.0000)**; switching VAE decoding to fp16 drops that peak
 from 589 to 332 MB; capturing the whole 20-step DDIM as one CUDA Graph drops 256² latency
 from **1013 to 218 ms (4.65×)**, with **replay bit-identical to eager (max diff = 0)**.
 
 **End-to-end, on the shipped artifact**: `diffusion_model_step260000.safetensors` is
-**323.48 MB** (runtime int4 layout, **zero-conversion** load); 512×512 / 20 DDIM steps
-runs at **3.1–3.5 s per image** with a **process peak of 1.34 GB** of allocated VRAM; the
-log confirms `int4 fused kernel (direct build) - 160L + 96C - skipped 0 - never pushed
+**323.48 MB** (runtime int4 layout, **zero-conversion** load); 512×512 / 20 DDIM steps.
+With all three models resident (default `resident` mode): **1.34–1.44 s per image**,
+a **process peak of 1.92 GB** of allocated VRAM (`cache` mode: 2.27–2.51 s / 1.34 GB —
+see §5.7); the log confirms `int4 fused kernel (direct build) - 160L + 96C - skipped 0 - never pushed
 bf16 onto the card`.
 
 ### 5.5 Step-time breakdown: the host, not the GPU, is the bottleneck
 
-![Figure 9](report/figures/en/fig9_bottleneck.png)
+![Figure 9](../figures/en/fig9_bottleneck.png)
 
-**Figure 9.** Where one training step (686 ms) actually goes.
+**Figure 9.** Where one training step actually goes (long-run mean 0.6545 s/step; the 686 ms in the chart is a single-step snapshot).
 
 | Item | Time | Share |
 |---|---|---|
@@ -395,7 +396,7 @@ hold — or at least deserve to be verified first — on any low-bit diffusion p
 ### 5.7 A counter-intuitive deployment result: turning off "save VRAM" makes it 40% faster
 
 The shipped demo keeps **all three of UNet, VAE and the text encoder resident in VRAM** by
-default.  The intuition is that "the TE is only 1.6 GB, so unloading it after use must save
+default.  The intuition is that "the TE is only 1.6 GB (fp16 theoretical; the shipped TE is int8 at 756 MB), so unloading it after use must save
 memory" -- but the measured peaks are nearly identical and the unloading variant is about
 **40% slower**:
 
@@ -587,8 +588,8 @@ present three findings:
    throughout (packing check: codes exact, no degradation).
 2. **Low-bit fused-kernel inference works** — a **bit-exact** ternary-to-int4 mapping,
    weights resident at 287.3 MB with unpacking fused into the GEMM; the deliverable is
-   152.99 MB (2.190 bpw) and produces images end-to-end on a real GPU with
-   a peak of **1.34 GB**.
+   152.99 MB (2.192 bpw) and produces images end-to-end on a real GPU (all three models
+   resident: peak **1.92 GB**, §5.7).
 3. **But quality is below bar, and the current scale is saturated** — clip_ratio shows no
    net progress over the last 130k steps, and the final reading 0.2908 never
    exceeds the step-170k peak of 0.3782. For that reason — compounded by an exhausted
@@ -606,6 +607,18 @@ for with real losses. **That is the most reusable part of this report**: even a 
 no interest in text-to-image can still use "low bit-width without fusion is a net loss",
 "cos is not a feasibility criterion", and "after resuming, verify the hyperparameters
 actually in effect".
+
+
+## 9. Reproduction
+
+- **Code**: the complete training, packing, fused-kernel inference and evaluation scripts
+  are open-sourced at **https://github.com/JunyiDu2009/AquariusImage** (for the
+  cross-machine reproduction constraints see §4.2).
+- **Model weights**: the base-3 packed UNet (152.99 MB), the int4 runtime artifact
+  (323.48 MB), the int8 text encoder (755.56 MB) and the fp16 VAE (334.64 MB) are
+  uploaded to Hugging Face; download links are maintained in the repository README.
+- **Data**: COCO train2017 (118,287 images, §4.1); VAE latents and text embeddings can be
+  precomputed from the raw data with the repository scripts.
 
 
 ## Acknowledgements: AI Assistance
@@ -686,11 +699,11 @@ Ascend NPUs," open-source, 2025. https://github.com/triton-lang/triton-ascend
 | Fig. 1 | `figures/en/fig1_pipeline.png` | Architecture and inference pipeline |
 | Fig. 2 | `figures/en/fig2_training.png` | Training panorama (loss / act / LR) |
 | Fig. 3 | `figures/en/fig3_clip_ratio.png` | clip_ratio series and saturation |
-| Fig. 4 | `figures/en/fig4_modes.png` | Quantization cost, three modes |
-| Fig. 5 | `figures/en/fig5_bitwidth.png` | Bandwidth and residency accounting |
-| Fig. 6 | `figures/en/fig6_optim.png` | Three memory/latency optimizations |
-| Fig. 7 | `figures/en/fig7_samples.png` | Real GPU outputs (512²) |
-| Fig. 8 | `figures/en/fig8_evolution.png` | Stage strip (earlier protocol) |
+| Fig. 4 | `figures/en/fig4_samples.png` | Real GPU outputs (512²) |
+| Fig. 5 | `figures/en/fig5_evolution.png` | Stage strip (earlier protocol) |
+| Fig. 6 | `figures/en/fig6_modes.png` | Quantization cost, three modes |
+| Fig. 7 | `figures/en/fig7_bitwidth.png` | Bandwidth and residency accounting |
+| Fig. 8 | `figures/en/fig8_optim.png` | Three memory/latency optimizations |
 | Fig. 9 | `figures/en/fig9_bottleneck.png` | Step-time breakdown (host-side bottleneck) |
 
 The Chinese edition uses the identically named files under `figures/zh/`.
