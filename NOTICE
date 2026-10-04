@@ -1,5 +1,6 @@
-AquariusImage
-Part of the AquariusDiffusion series (native low-bit text-to-image diffusion)
+AquariusTerimage
+Part of the AquariusImage sub-series of AquariusDiffusion
+(native low-bit text-to-image diffusion)
 Copyright 2026 Junyi Du
 
 This product includes components developed by third parties, each used under
@@ -25,6 +26,8 @@ its own license:
   collaboration with the GLM-5.3-Flash (Zhipu Z.ai) and DeepSeek V4.1 Flash
   (DeepSeek AI) large language models.
 
-The model weight files are distributed via GitHub Releases for research
-reproducibility. Check each component's own license before redistributing the
-weights. See LICENSE for the license of this repository's code and docs.
+The model weight files — including the UNet trained from scratch in this project —
+are released under the **Apache License 2.0**, Copyright 2026 Junyi Du, and are
+distributed via GitHub Releases. The bundled third-party components listed above
+remain under their own upstream terms; check them before redistributing the weights.
+See LICENSE for the full scope note.

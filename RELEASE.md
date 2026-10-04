@@ -2,6 +2,8 @@
 
 Repository: **`AquariusTerimage`** — https://github.com/JunyiDu2009/AquariusTerimage
 (AquariusDiffusion series; model name **Aquarius Terimage**).
+Path in the series: `AquariusDiffusion/AquariusImage/AquariusTerimage`.
+Licence: code, docs **and the weights** are Apache License 2.0 (see `LICENSE` / `NOTICE`).
 
 The repo deliberately tracks **no file above 12.8 MB** (GitHub's hard per-file push
 limit is 100 MB). The weights ship as **Release assets** (2 GB per asset), packaged as
@@ -31,7 +33,8 @@ D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimage/
 
 ## Local staging — READY TO UPLOAD (prepared 2026-10-04)
 
-`D:/AI_Library_D/发布/GitHub/Release/` holds everything the release needs:
+`D:/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/`
+holds everything the release needs:
 
 - `AquariusTerimage-v1.0-demo.zip` — the release asset
 - `sha256sums.txt` — publish as the 2nd asset (covers the zip and the four files inside)
@@ -39,11 +42,12 @@ D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimage/
 - `upload_release.sh` — one-shot: creates tag `v1.0` + uploads both assets
   (retry-safe, `--clobber` on re-run; needs `gh` authenticated)
 
-The git working tree for the push is `D:/AI_Library_D/发布/GitHub/Repo/` (its `origin`
+The git working tree for the push is
+`D:/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage/` (its `origin`
 is already set to `AquariusTerimage.git`). After the repo is pushed:
 
 ```
-bash "/d/AI_Library_D/发布/GitHub/Release/upload_release.sh"
+bash "/d/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/upload_release.sh"
 ```
 
 > Superseded: `D:/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/` staged the
@@ -61,7 +65,7 @@ section in both READMEs.
 ## Pre-push sanity checks
 
 ```bash
-cd /d/AI_Library_D/发布/GitHub/Repo
+cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage
 
 # nothing over 100 MB tracked in git (expect the largest to be tokenizer.json, 12.8 MB)
 git ls-files -z | xargs -0 du -b 2>/dev/null | sort -rn | head -5
@@ -70,7 +74,7 @@ git ls-files -z | xargs -0 du -b 2>/dev/null | sort -rn | head -5
 git remote -v
 
 # staged asset integrity
-cd "/d/AI_Library_D/发布/GitHub/Release" && sha256sum -c sha256sums.txt
+cd "/d/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage" && sha256sum -c sha256sums.txt
 ```
 
 Note: the staging path contains the Chinese folder name `发布`; `upload_release.sh`

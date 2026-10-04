@@ -203,15 +203,19 @@
 -------------------------------------------------------------------------------
 Scope note / 范围说明
 
-This Apache License 2.0 covers the source code, documentation and figures in
-this repository (see also the NOTICE file for third-party attribution
-notices). The model weight files (distributed via GitHub Releases) are
-provided for research reproducibility and are built on third-party
-components, each under its own license:
+This Apache License 2.0 covers the source code, documentation, figures **and the
+model weights** of this project (see also the NOTICE file for third-party
+attribution notices). The weight files (distributed via GitHub Releases) are
+Copyright 2026 Junyi Du and released under the same Apache License 2.0 — including
+the UNet trained from scratch in this project.
+
+The release package also bundles or derives from third-party components, each of
+which remains under its own license:
 
   - Text encoder:  derived from Qwen3.5-0.8B (see its upstream license)
   - VAE:           SD1.5 VAE weights (CreativeML Open RAIL-M terms apply)
   - UNet:          structurally isomorphic to SD1.5 (see its upstream license)
   - Training data: COCO train2017 (COCO terms apply)
 
-Check each component's own license before redistributing the weights.
+Those third-party terms apply to those components wherever they are redistributed;
+check them before redistributing the weights.

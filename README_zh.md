@@ -4,9 +4,9 @@
 
 [English](README.md) | 中文
 
-**模型名：Aquarius Terimage** —— 属于 **AquariusDiffusion** 系列（原生低比特文生图扩散）。
-本仓库（`AquariusTerimage`）是**三值**成员；计划中的**二值**对应版（`AquariusBinimage`）
-**尚未训练**（算力经费不足，见报告 §7.1）。
+**模型名：Aquarius Terimage** —— 属于 **AquariusDiffusion** 系列（原生低比特文生图扩散），
+路径 `AquariusDiffusion/AquariusImage/AquariusTerimage`。本仓库是**三值**成员；
+计划中的**二值**对应版（`AquariusBinimage`）**尚未训练**（算力经费不足，见报告 §7.1）。
 
 ---
 
@@ -58,7 +58,7 @@
   <img src="figures/ui_screenshot.png" width="49%" alt="演示界面" />
 </p>
 
-模型进化对照条（16 个阶段，固定 10 条 caption 协议，较早协议 —— 仅在同协议内可比）：
+模型进化对照条（18 个采样点，固定 10 条 caption 协议，较早协议 —— 仅在同协议内可比）：
 
 <p><img src="figures/zh/fig5_evolution.png" width="100%" alt="进化对照条" /></p>
 
@@ -173,16 +173,16 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 
 ## 许可
 
-- **本仓库代码与文档：Apache License 2.0**（见 [LICENSE](LICENSE) 与 [NOTICE](NOTICE)）。
-- **权重**仅用于研究复现。注意其组成：文本编码器基于 **Qwen3.5-0.8B**，VAE 与
-  UNet 结构同构于 **SD1.5**，训练数据为 **COCO train2017** —— 各依其原许可，
-  二次分发前请自行核对。
+- **本仓库代码、文档与模型权重：Apache License 2.0**（见 [LICENSE](LICENSE) 与
+  [NOTICE](NOTICE)，含完整范围说明）。
+- 随包附带的第三方组件各依其原许可：文本编码器基于 **Qwen3.5-0.8B**，VAE 与 UNet
+  结构同构于 **SD1.5**，训练数据为 **COCO train2017** —— 二次分发前请自行核对。
 
 ## 引用
 
 ```bibtex
 @techreport{du2026aquarius,
-  title       = {Aquarius: A From-Scratch Natively Ternary Text-to-Image Diffusion Model},
+  title       = {Aquarius: A From-Scratch, Natively Ternary, Text-to-Image Diffusion Model},
   author      = {Du, Junyi},
   institution = {Independent Research},
   year        = {2026},

@@ -1,4 +1,4 @@
-# Aquarius: A From-Scratch Natively Ternary Text-to-Image Diffusion Model
+# Aquarius: A From-Scratch, Natively Ternary, Text-to-Image Diffusion Model
 
 ### Training Feasibility, Fused-Kernel Inference, and Saturation Analysis
 
@@ -24,7 +24,7 @@ space from step 0** (Native Low-bit Training, NLT). We train a text-to-image UNe
 **558,347,012** parameters from scratch, of which **540,147,712** are constrained to
 ternary values `{−s, 0, +s}` with one fp16 scale shared by every **128** weights
 (g128 mean-scale + STE). Training runs stably for 260,000 steps
-(≈ 28.70 passes over COCO train2017) on a single 32 GB consumer GPU, with no
+(≈ 28.70 epochs over COCO train2017) on a single 32 GB consumer GPU, with no
 collapse, no divergence and no OOM. The one severe incident was an activation runaway
 caused by the learning rate being silently overwritten by the checkpoint; it is
 diagnosed and fixed.
@@ -251,7 +251,7 @@ the checkpoint's `base_lrs` on resume**. **No recurrence in the 190k steps since
 
 ![Figure 3](../figures/en/fig3_clip_ratio.png)
 
-**Figure 3.** The full clip_ratio series (16 stages).
+**Figure 3.** The full clip_ratio series (16 sampling points, up to step 240,000). **Note: the Figure 5 stage strip has 18 sampling points (including 250k / 260k), a different set from this series, so the two figures cannot be compared point by point.**
 
 | Range | Slope | t | Reading |
 |---|---|---|---|
@@ -283,9 +283,9 @@ The corrected reading is therefore: **"below a usable release bar" still stands*
 
 ![Figure 5](../figures/en/fig5_evolution.png)
 
-**Figure 5.** Stage strip (10 fixed COCO captions, 640×640, seed 100000+i).
-**Note: this strip uses the earlier protocol (with latent clamping), so it is only valid
-for relative comparisons between stages.**
+**Figure 5.** Stage strip (**18 sampling points**: step 9,058 + 40,000 + 110,000-260,000 in steps of 10k), 10 fixed COCO captions, 640×640, seed 100000+i.
+**Note: this strip uses the earlier sampling protocol (with latent clamping); the value annotated beside each row is the `clip_ratio` under that protocol** — the same metric as §5.2, and the readings agree (9,058 -> 0.115; 170,000 -> 0.378, the peak; 260,000 -> 0.291), so only the *relative* trend between stages is meaningful.
+Note also that the weight packing format changed at step 170,000 (b2/fp32 before, b3/fp16 after), so comparisons across that point deserve care.
 
 ### 5.3 Quantization cost
 
@@ -319,6 +319,13 @@ full-precision reference**. At this scale (558M parameters) and data budget,
 
 > **Note that `int8 resident, unfused` reads 5 B per parameter — worse than bf16.** Only
 > when the unpacked weights go straight into the multiplier does bandwidth actually drop.
+>
+> **On the `Resident` column**: it is the measured/derived on-card footprint (including
+> group scales and runtime buffers), not a direct "bytes per param x total params"
+> product — the `bf16 weights` row is the measured load (1131.4 MB), whereas
+> `int8 resident, unfused` is derived from the **quantized** parameter count,
+> 540,147,712 x 5 B (= 2700.74 MB). Different denominators, hence the small mismatch
+> with the nominal figures.
 
 ![Figure 8](../figures/en/fig8_optim.png)
 
@@ -393,7 +400,7 @@ hold — or at least deserve to be verified first — on any low-bit diffusion p
   from checkpoint timestamps by about **15%**; ETAs built on it are systematically optimistic
   (this is how we once believed we would reach epoch 30 before the deadline).
 
-### 5.7 A counter-intuitive deployment result: turning off "save VRAM" makes it 40% faster
+### 5.7 A counter-intuitive deployment result: turning off "save VRAM" makes it about 40% faster
 
 The shipped demo keeps **all three of UNet, VAE and the text encoder resident in VRAM** by
 default.  The intuition is that "the TE is only 1.6 GB (fp16 theoretical; the shipped TE is int8 at 756 MB), so unloading it after use must save
@@ -407,6 +414,8 @@ memory" -- but the measured peaks are nearly identical and the unloading variant
 
 > Measured on an RTX 5090 with `torch.cuda.max_memory_allocated`; range over three
 > consecutive generations.
+> "About 40% faster" is the relative speed (1 - 1.34/2.27 ~= 41%, 1 - 1.44/2.51 ~= 43%);
+> equivalently, `cache` is **58%-87% slower** than `resident`.
 
 Two reasons:
 
@@ -700,7 +709,7 @@ Ascend NPUs," open-source, 2025. https://github.com/triton-lang/triton-ascend
 | Fig. 2 | `figures/en/fig2_training.png` | Training panorama (loss / act / LR) |
 | Fig. 3 | `figures/en/fig3_clip_ratio.png` | clip_ratio series and saturation |
 | Fig. 4 | `figures/en/fig4_samples.png` | Real GPU outputs (512²) |
-| Fig. 5 | `figures/en/fig5_evolution.png` | Stage strip (earlier protocol) |
+| Fig. 5 | `figures/en/fig5_evolution.png` | Stage strip (18 sampling points, earlier protocol) |
 | Fig. 6 | `figures/en/fig6_modes.png` | Quantization cost, three modes |
 | Fig. 7 | `figures/en/fig7_bitwidth.png` | Bandwidth and residency accounting |
 | Fig. 8 | `figures/en/fig8_optim.png` | Three memory/latency optimizations |

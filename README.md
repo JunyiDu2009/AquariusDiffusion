@@ -5,9 +5,9 @@
 English | [中文说明](README_zh.md)
 
 **Model: Aquarius Terimage** — part of the **AquariusDiffusion** series (native low-bit
-text-to-image diffusion). This repository (`AquariusTerimage`) is the **ternary** member;
-its planned **binary** counterpart (`AquariusBinimage`) is **not trained** — the compute
-budget was exhausted (report §7.1).
+text-to-image diffusion), at `AquariusDiffusion/AquariusImage/AquariusTerimage`. This
+repository is the **ternary** member; its planned **binary** counterpart
+(`AquariusBinimage`) is **not trained** — the compute budget was exhausted (report §7.1).
 
 ---
 
@@ -62,7 +62,7 @@ Two conclusions, both honest:
   <img src="figures/ui_screenshot.png" width="49%" alt="demo UI" />
 </p>
 
-Evolution strip (16 stages, fixed 10-caption protocol, earlier protocol — only comparable within it):
+Evolution strip (18 sampling points, fixed 10-caption protocol, earlier protocol — only comparable within it):
 
 <p><img src="figures/en/fig5_evolution.png" width="100%" alt="evolution strip" /></p>
 
@@ -182,17 +182,18 @@ Inference/demo files are self-contained and portable.
 
 ## License
 
-- **Code & docs in this repo: Apache License 2.0** (see [LICENSE](LICENSE) and [NOTICE](NOTICE)).
-- **Weights** are provided for research reproducibility. Note the components:
-  the text encoder is derived from **Qwen3.5-0.8B**, the VAE and the UNet structure are
-  isomorphic to **SD1.5**, and training data is **COCO train2017** — each under its own
-  license. Check them before any redistribution.
+- **Code, docs and the model weights: Apache License 2.0** (see [LICENSE](LICENSE) and
+  [NOTICE](NOTICE)).
+- Bundled third-party components keep their own upstream terms: the text encoder is
+  derived from **Qwen3.5-0.8B**, the VAE and the UNet structure are isomorphic to
+  **SD1.5**, and the training data is **COCO train2017** — check them before
+  redistributing.
 
 ## Citation
 
 ```bibtex
 @techreport{du2026aquarius,
-  title       = {Aquarius: A From-Scratch Natively Ternary Text-to-Image Diffusion Model},
+  title       = {Aquarius: A From-Scratch, Natively Ternary, Text-to-Image Diffusion Model},
   author      = {Du, Junyi},
   institution = {Independent Research},
   year        = {2026},
