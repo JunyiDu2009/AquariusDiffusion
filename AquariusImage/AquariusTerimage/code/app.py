@@ -335,6 +335,16 @@ def toggle_state(cur_lang, cur_preset, cur_w, cur_h):
 
 
 
+def _gallery_out(images):
+    """画廊输出：**列数随张数自适应**。
+
+    1 张      -> 单列，占满整栏宽（一眼看全整图）
+    >= 2 张   -> 2 列，2×2 宫格，**宫格整体宽度 = 一张图的宽度**（每格半宽）
+    """
+    import gradio as gr
+    return gr.update(value=images, columns=1 if len(images) <= 1 else 2)
+
+
 # --------------------------------------------------------------------------
 # Generation callback (a generator: streams log lines to the UI while running)
 # --------------------------------------------------------------------------
@@ -352,7 +362,7 @@ def make_handlers(engine):
     def on_generate(prompt_text, steps, width, height, seed, per_prompt, lowvram, lang):
         lg = lang if lang in T else "en"
         if not _LOCK.acquire(blocking=False):
-            yield T[lg]["warn_busy"], _LAST["gallery"], ""
+            yield T[lg]["warn_busy"], _gallery_out(_LAST["gallery"]), ""
             return
 
         box = []
@@ -364,7 +374,7 @@ def make_handlers(engine):
         prompts = [l.strip() for l in (prompt_text or "").splitlines() if l.strip()]
         if not prompts:
             _LOCK.release()
-            yield T[lg]["warn_noprompt"], _LAST["gallery"], ""
+            yield T[lg]["warn_noprompt"], _gallery_out(_LAST["gallery"]), ""
             return
 
         q = queue.Queue()
@@ -389,17 +399,17 @@ def make_handlers(engine):
                 try:
                     kind, msg = q.get(timeout=0.4)
                 except queue.Empty:
-                    yield "\n".join(box[-60:]), _LAST["gallery"], ""
+                    yield "\n".join(box[-60:]), _gallery_out(_LAST["gallery"]), ""
                     continue
                 if kind == "done":
                     break
                 say(_loc(str(msg), lg))
-                yield "\n".join(box[-60:]), _LAST["gallery"], ""
+                yield "\n".join(box[-60:]), _gallery_out(_LAST["gallery"]), ""
             th.join()
 
             if "err" in holder:
                 say(T[lg]["err_prefix"] + holder["err"])
-                yield "\n".join(box[-60:]), _LAST["gallery"], ""
+                yield "\n".join(box[-60:]), _gallery_out(_LAST["gallery"]), ""
                 return
 
             res_list = holder.get("res") or []
@@ -408,7 +418,7 @@ def make_handlers(engine):
             if gallery:
                 _LAST["gallery"] = gallery
             say(f"{T[lg]['done_prefix']} {len(gallery)} {T[lg]['images']} -> {OUT_DIR}")
-            yield ("\n".join(box[-60:]), _LAST["gallery"],
+            yield ("\n".join(box[-60:]), _gallery_out(_LAST["gallery"]),
                    f"{OUT_DIR}\n{len(gallery)} {T[lg]['images']}")
         finally:
             _LOCK.release()
@@ -417,7 +427,7 @@ def make_handlers(engine):
         lg = lang if lang in T else "en"
         msg = engine.release()
         _LAST["gallery"] = []
-        return _loc(msg, lg) + "\n" + T[lg]["reload_note"], [], ""
+        return _loc(msg, lg) + "\n" + T[lg]["reload_note"], _gallery_out([]), ""
 
     def on_probe():
         if engine.step is None:
@@ -514,8 +524,8 @@ def build_ui(engine):
                 #    用户得在组件里上下滑动才能看全（2026-10-04 实测：height=420 时
                 #    512/640 的上下边都被切，height="auto" 同样被裁）。留 None 让格子按
                 #    图片比例自适应 ⇒ 整图一眼可见。
-                # 单列：一张图一行，占满结果栏宽度 ⇒ 整图最大且完整可见
-                # （columns=2 时每图只有约半栏宽，看质量偏小）
+                # 初始列数 = 1（无图/单图）。真正的列数在每次出图时由 `_gallery_out()`
+                # 按张数自适应：1 张占满整栏；≥2 张切 2 列，宫格整体宽度 = 一张图宽度。
                 gallery = gr.Gallery(label=T["zh"]["results"], columns=1,
                                      object_fit="contain", elem_id="aq-gallery")
                 outdir = gr.Textbox(label=T["zh"]["outdir"], lines=2,
