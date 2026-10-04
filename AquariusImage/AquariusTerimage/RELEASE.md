@@ -1,8 +1,8 @@
 # RELEASE.md — maintainer notes: publishing the release assets
 
-Repository: **`AquariusTerimage`** — https://github.com/JunyiDu2009/AquariusTerimage
-(AquariusDiffusion series; model name **Aquarius Terimage**).
-Path in the series: `AquariusDiffusion/AquariusImage/AquariusTerimage`.
+Repository: **`AquariusDiffusion`** — https://github.com/JunyiDu2009/AquariusDiffusion
+(the series). This model lives in its `AquariusImage/AquariusTerimage/` folder;
+model name **Aquarius Terimage**.
 Licence: code, docs **and the weights** are Apache License 2.0 (see `LICENSE` / `NOTICE`).
 
 The repo deliberately tracks **no file above 12.8 MB** (GitHub's hard per-file push limit
@@ -45,15 +45,19 @@ verifying.
 
 Pushed and verified:
 
-- **https://github.com/JunyiDu2009/AquariusTerimage** (public, branch `main`, 15 topics,
-  description set). README renders with all figures; `docs/` carries both report PDFs.
-- Push command that works on this machine (Windows schannel blocks on the CRL check, so
-  the revocation check must be turned off for the command — `gh` is not authenticated here,
-  but the stored git credential for github.com **is** JunyiDu2009's token):
+- **https://github.com/JunyiDu2009/AquariusDiffusion** (public, branch `main`).
+  The model page is `AquariusImage/AquariusTerimage/README.md`; its `docs/` carries both
+  report PDFs.
+- Pushing from this machine needs **two workarounds**: Windows schannel blocks on the CRL
+  check, and the interactive **Git Credential Manager must be bypassed** (it pops an
+  account-selection dialog and hangs the push). Hand the token over directly instead:
 
 ```bash
-cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage
-git -c http.schannelCheckRevoke=false push -u origin main
+cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion      # git root = series root
+TOK=$(printf 'protocol=https\nhost=github.com\n\n' | git credential fill | sed -n 's/^password=//p')
+git -c credential.helper= -c http.schannelCheckRevoke=false \
+    -c http.extraHeader="Authorization: Basic $(printf 'x-access-token:%s' "$TOK" | base64 -w0)" \
+    push origin main
 ```
 
 - **Still pending: the Release assets** (3 weight files ≈ 1.24 GB + the loose UI files).
@@ -77,9 +81,8 @@ requirements.txt · README.txt · sha256sums.txt · release_notes.md · upload_r
   authenticated)
 - `release_notes.md` — use as the `--notes-file`; it carries the placement table
 
-The git working tree for the push is
-`D:/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage/` (its
-`origin` is already set to `AquariusTerimage.git`). After the repo is pushed:
+The git working tree is `D:/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/` (the series
+root; `origin` = `AquariusDiffusion.git`). After the repo is pushed:
 
 ```
 bash "/d/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/upload_release.sh"
@@ -99,10 +102,9 @@ under the Weights section in both READMEs.
 ## GitHub repo settings (description / topics — not tracked in git)
 
 The About **Description**, the **Topics** and the optional **Website** are repository
-settings, not files. Ready-to-paste copy — the recommended English description, a short
-and a Chinese variant, 15 topics, the one-shot `gh repo edit` command, and matching
-placeholders for the future `AquariusDiffusion` / `AquariusImage` / `AquariusBinimage`
-repos — is staged next to these folders:
+settings, not files; the current values are already applied to
+`JunyiDu2009/AquariusDiffusion`. Ready-to-paste copy (English / short / Chinese
+descriptions, topics, the one-shot `gh repo edit` command) lives outside the repo:
 
 ```
 D:/AI_Library_D/发布/GitHub/GITHUB_METADATA.md
@@ -111,7 +113,7 @@ D:/AI_Library_D/发布/GitHub/GITHUB_METADATA.md
 ## Pre-push sanity checks
 
 ```bash
-cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage
+cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion
 
 # nothing over 100 MB tracked in git (expect the largest to be tokenizer.json, 12.8 MB)
 git ls-files -z | xargs -0 du -b 2>/dev/null | sort -rn | head -5

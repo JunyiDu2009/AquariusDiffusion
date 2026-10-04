@@ -1,12 +1,14 @@
 # ---- weights: download from GitHub Releases (see README / RELEASE.md) ----
 # The sidecar files in text_encoder/ ARE tracked; only the big binaries are not.
-text_encoder/*.safetensors
-VAE/*.safetensors
-diffusion_model/*.safetensors
-portable/*.safetensors
-*.pt
-*.pth
-*.ckpt
+# `**/` keeps these patterns working wherever the model folder sits — the repo root is the
+# series root and the model lives in AquariusImage/AquariusTerimage/.
+**/text_encoder/*.safetensors
+**/VAE/*.safetensors
+**/diffusion_model/*.safetensors
+**/portable/*.safetensors
+**/*.pt
+**/*.pth
+**/*.ckpt
 
 # ---- training / inference outputs ----
 outputs/
