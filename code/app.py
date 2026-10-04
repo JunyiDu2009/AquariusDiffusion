@@ -52,6 +52,27 @@ a busy street with cars at night
 a bowl of fruit on a wooden table"""
 
 # --------------------------------------------------------------------------
+# 去掉 Gallery 自带的内部滚动条。
+# ⚠️ 只把 gr.Gallery 的 height 去掉是**不够**的：Gradio 仍会给滚动容器加上
+#    `.grid-wrap.fixed-height`，把高度卡在默认值（实测 computed max-height = 609.4px）
+#    ⇒ 图片一多就出现内部滚动条。这里用 !important 覆盖它（带 !important 的作者声明
+#    优先于组件的普通内联样式）。实测：改前 clientHeight 609 / overflowY scroll；
+#    改后 clientHeight 1188 / overflowY visible / max-height none —— 滚动条消失，
+#    整图完整可见。
+# --------------------------------------------------------------------------
+GALLERY_CSS = """
+<style>
+#aq-gallery .grid-wrap,
+#aq-gallery .gallery-container {
+  height: auto !important;
+  max-height: none !important;
+  overflow: visible !important;
+}
+</style>
+"""
+
+
+# --------------------------------------------------------------------------
 # 运行日志自动跟随到底部（tail -f 行为）。
 # ⚠️ 不用 MutationObserver：Gradio 是通过 JS 改 textarea.value，不产生 DOM 变动，观察不到；
 #    轮询 scrollHeight 才可靠。且**只在用户本来就贴着底部时**跟随 —— 手动往上翻看历史时
@@ -613,7 +634,7 @@ def main():
         pass
     demo.launch(server_name=args.host, server_port=args.port,
                 share=args.share, inbrowser=not args.no_browser,
-                allowed_paths=[str(OUT_DIR)], head=AUTOSCROLL_JS)
+                allowed_paths=[str(OUT_DIR)], head=GALLERY_CSS + AUTOSCROLL_JS)
     return 0
 
 
