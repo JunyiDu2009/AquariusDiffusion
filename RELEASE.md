@@ -76,6 +76,18 @@ technical report §9 points at it; the canonical download links live in `README.
 `README_zh.md`). Once the HF upload is live, add the model-card URL to the "Mirror" note
 under the Weights section in both READMEs.
 
+## GitHub repo settings (description / topics — not tracked in git)
+
+The About **Description**, the **Topics** and the optional **Website** are repository
+settings, not files. Ready-to-paste copy — the recommended English description, a short
+and a Chinese variant, 15 topics, the one-shot `gh repo edit` command, and matching
+placeholders for the future `AquariusDiffusion` / `AquariusImage` / `AquariusBinimage`
+repos — is staged next to these folders:
+
+```
+D:/AI_Library_D/发布/GitHub/GITHUB_METADATA.md
+```
+
 ## Pre-push sanity checks
 
 ```bash
