@@ -52,6 +52,35 @@ a busy street with cars at night
 a bowl of fruit on a wooden table"""
 
 # --------------------------------------------------------------------------
+# 运行日志自动跟随到底部（tail -f 行为）。
+# ⚠️ 不用 MutationObserver：Gradio 是通过 JS 改 textarea.value，不产生 DOM 变动，观察不到；
+#    轮询 scrollHeight 才可靠。且**只在用户本来就贴着底部时**跟随 —— 手动往上翻看历史时
+#    不会被拽回去。
+# ⚠️ Gradio 6 里 `head` 是 launch() 的参数，不再是 Blocks() 的了（实测会告警）。
+# --------------------------------------------------------------------------
+AUTOSCROLL_JS = """
+<script>
+(function () {
+  function follow() {
+    var host = document.getElementById('aq-log');
+    if (!host) return;
+    var ta = host.querySelector('textarea');
+    if (!ta) return;
+    var atBottom = (ta.scrollHeight - ta.scrollTop - ta.clientHeight) < 48;
+    if (ta._aqLast === undefined) { ta._aqLast = ta.scrollHeight; atBottom = true; }
+    if (atBottom && ta.scrollHeight !== ta._aqLast) {
+      ta._aqLast = ta.scrollHeight;
+      ta.scrollTop = ta.scrollHeight;
+    }
+  }
+  setInterval(follow, 250);
+  document.addEventListener('DOMContentLoaded', follow);
+})();
+</script>
+"""
+
+
+# --------------------------------------------------------------------------
 # Bilingual strings.  Every key must exist in BOTH languages.
 # --------------------------------------------------------------------------
 T = {
@@ -459,9 +488,15 @@ def build_ui(engine):
 
             with gr.Column(scale=3):
                 log = gr.Textbox(label=T["zh"]["log"], lines=12, interactive=False,
-                                 max_lines=12)
-                gallery = gr.Gallery(label=T["zh"]["results"], columns=2, height=420,
-                                     object_fit="contain")
+                                 max_lines=12, elem_id="aq-log")
+                # ⚠️ Gallery 不要设固定 height：设了之后格子高度被压死，图片会被裁掉，
+                #    用户得在组件里上下滑动才能看全（2026-10-04 实测：height=420 时
+                #    512/640 的上下边都被切，height="auto" 同样被裁）。留 None 让格子按
+                #    图片比例自适应 ⇒ 整图一眼可见。
+                # 单列：一张图一行，占满结果栏宽度 ⇒ 整图最大且完整可见
+                # （columns=2 时每图只有约半栏宽，看质量偏小）
+                gallery = gr.Gallery(label=T["zh"]["results"], columns=1,
+                                     object_fit="contain", elem_id="aq-gallery")
                 outdir = gr.Textbox(label=T["zh"]["outdir"], lines=2,
                                     interactive=False)
                 with gr.Accordion("模型信息 Model info", open=False) as acc_info:
@@ -578,7 +613,7 @@ def main():
         pass
     demo.launch(server_name=args.host, server_port=args.port,
                 share=args.share, inbrowser=not args.no_browser,
-                allowed_paths=[str(OUT_DIR)])
+                allowed_paths=[str(OUT_DIR)], head=AUTOSCROLL_JS)
     return 0
 
 
