@@ -81,9 +81,8 @@ AquariusTerimage/
 └── README.md
 ```
 
-`text_encoder/` 伴生文件 + 三个空权重文件夹刻意保持与发布整包内相同的布局：
-解压 `AquariusTerimage-v1.0-demo.zip` 后即可开箱即用（仓库里保留这些文件夹，是为了手动
-放置四个权重文件时同样可用）。
+`text_encoder/` 伴生文件 + 三个空权重文件夹就是 Release 里四个权重文件的落位：
+把每个文件放进同名文件夹，即可开箱即用（界面与脚本本仓库已自带）。
 
 ## 快速开始
 
@@ -95,7 +94,7 @@ pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 ```
 
-从 **Releases** 下载 **`AquariusTerimage-v1.0-demo.zip`** 并解压（见下表），然后：
+从 **Releases** 下载四个权重文件（见下表）放进对应文件夹，然后：
 
 | Windows | macOS / Linux |
 |---|---|
@@ -117,23 +116,20 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 文本编码器权重以 int8 形态存储、在量化空间内重建 —— `transformers.from_pretrained`
 读不了这个文件，所以才有 `code/load_te.py`（已接进 `app.py` / `aq_play.py`，无需额外操作）。
 
-### 权重下载 —— Releases 上的单个自包含整包
+### 权重下载 —— Releases 上的四个文件（无压缩包）
 
-| Release 资产 | 体积 | 内容 |
-|---|---|---|
-| `AquariusTerimage-v1.0-demo.zip` | 约 1.5 GB | 四个权重文件 **+** 开箱即用的中英双语 Gradio 界面 —— 解压后双击 `run_ui.bat`（Windows）或 `cd AquariusTerimage && python app.py` |
-| `sha256sums.txt` | < 1 KB | 校验和，供你核对下载完整性 |
-
-整包解压后是一个名为 `AquariusTerimage/` 的文件夹，布局与本仓库的权重文件夹完全一致：
-
-| 包内文件 | 体积 | 放到 |
+| Release 资产 | 体积 | 放到 |
 |---|---|---|
 | `aquarius_ternary_step260000_base3.safetensors`（base-3 母版，跨平台） | 152.99 MB | `portable/` |
 | `diffusion_model_step260000.safetensors`（int4 CUDA 运行时） | 323.48 MB | `diffusion_model/` |
 | `model_int8.safetensors`（文本编码器，Qwen3.5-0.8B 语言塔，int8） | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors`（SD1.5 VAE，fp16） | 334.64 MB | `VAE/` |
+| `sha256sums.txt` | < 1 KB | —— 用 `sha256sum -c` 校验 |
 
-> **镜像**：同一整包也会发布在 **Hugging Face**；HF 链接上传完成后更新在这里。
+无需解压：Gradio 界面（`code/app.py`、`code/run_ui.bat`）与文本编码器的
+tokenizer/配置伴生文件都已在本仓库内。
+
+> **镜像**：同一组权重文件也会发布在 **Hugging Face**；HF 链接上传完成后更新在这里。
 > 本 README 始终是下载链接的权威出处。
 
 > 不要把 base-3 母版丢进 `diffusion_model/` —— 该目录按「最高步数」glob 选模型，

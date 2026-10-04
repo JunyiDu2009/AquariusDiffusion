@@ -85,10 +85,8 @@ AquariusTerimage/
 └── README.md
 ```
 
-The `text_encoder/` sidecars + the three empty weight folders mirror the layout inside
-the release zip: unzip `AquariusTerimage-v1.0-demo.zip` and everything works out of the
-box (the repo folders exist so the same layout also works if you place the four weight
-files by hand).
+The `text_encoder/` sidecars + the three empty weight folders are where the four Release
+files go: drop each file into the same-named folder and everything runs out of the box.
 
 ## Quick start
 
@@ -101,7 +99,7 @@ pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 ```
 
-Download **`AquariusTerimage-v1.0-demo.zip`** from Releases (see the table below), unzip it, then:
+Download the four weight files from **Releases** (see the table below) into their folders, then:
 
 | Windows | macOS / Linux |
 |---|---|
@@ -124,25 +122,21 @@ The text encoder keeps its weights in int8 and reconstructs them in the quantize
 space — `transformers.from_pretrained` cannot read that file, which is why
 `code/load_te.py` exists (already wired into `app.py` / `aq_play.py`).
 
-### Weights — one self-contained package in Releases
+### Weights — four files, straight from Releases (no archive)
 
-| Release asset | Size | What it is |
-|---|---|---|
-| `AquariusTerimage-v1.0-demo.zip` | ~1.5 GB | the four weight files **plus** a ready-to-run bilingual Gradio UI — unzip, then `run_ui.bat` (Windows) or `cd AquariusTerimage && python app.py` |
-| `sha256sums.txt` | < 1 KB | checksums, so you can verify the download |
-
-The zip unpacks to a folder named `AquariusTerimage/`, laid out exactly like the weight
-folders in this repository:
-
-| File inside the zip | Size | Folder |
+| Release asset | Size | Put it in |
 |---|---|---|
 | `aquarius_ternary_step260000_base3.safetensors` (base-3 master, portable) | 152.99 MB | `portable/` |
 | `diffusion_model_step260000.safetensors` (int4 CUDA runtime) | 323.48 MB | `diffusion_model/` |
 | `model_int8.safetensors` (text encoder, Qwen3.5-0.8B language tower, int8) | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors` (SD1.5 VAE, fp16) | 334.64 MB | `VAE/` |
+| `sha256sums.txt` | < 1 KB | — verify with `sha256sum -c` |
 
-> **Mirror:** the same package is also being published on **Hugging Face**; the HF link
-> will be added here once live. This README stays the canonical index of download links.
+Nothing to unpack: the Gradio UI (`code/app.py`, `code/run_ui.bat`) and the text-encoder
+tokenizer/config sidecars already live in this repository.
+
+> **Mirror:** the same four files are also being published on **Hugging Face**; the HF
+> link will be added here once live. This README stays the canonical index of download links.
 
 > Do **not** drop the base-3 master into `diffusion_model/` — that folder is globbed
 > and the "highest step" tie would make model selection ambiguous. Use `--ckpt` instead.
