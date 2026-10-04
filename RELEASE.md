@@ -1,84 +1,77 @@
-# RELEASE.md — maintainer notes: publishing the weight files
+# RELEASE.md — maintainer notes: publishing the release package
 
-The git repository deliberately contains **no file above 12.8 MB** (GitHub's hard
-per-file push limit is 100 MB). The four model binaries are published as
-**GitHub Release assets** (limit: 2 GB per asset — all four fit comfortably).
+Repository: **`AquariusTerimage`** — https://github.com/JunyiDu2009/AquariusTerimage
+(AquariusDiffusion series; model name **Aquarius Terimage**).
 
-## The four assets (v1.0 — `Aquarius Terimage · step 260,000`)
+The repo deliberately tracks **no file above 12.8 MB** (GitHub's hard per-file push
+limit is 100 MB). The weights ship as **Release assets** (2 GB per asset), packaged as
+one self-contained zip so the download also carries the runnable Gradio UI.
 
-| # | Asset file | Exact size (bytes) | MB (decimal) | User drops it into |
-|---|---|---|---|---|
-| 1 | `aquarius_ternary_step260000_base3.safetensors` | 152,990,556 | 152.99 | `portable/` |
-| 2 | `diffusion_model_step260000.safetensors` | 323,476,536 | 323.48 | `diffusion_model/` |
-| 3 | `model_int8.safetensors` | 755,557,000 | 755.56 | `text_encoder/` |
-| 4 | `VAE.safetensors` | 334,643,276 | 334.64 | `VAE/` |
+## The release assets (v1.0 — `Aquarius Terimage · step 260,000`)
 
-Source copies (do not delete from the archive until the release is verified):
+| # | Asset | What it is | Size |
+|---|---|---|---|
+| 1 | `AquariusTerimage-v1.0-demo.zip` | the 4 weight files + bilingual Gradio UI + `run_ui.bat` (unpacks to an `AquariusTerimage/` folder) | ~1.5 GB |
+| 2 | `sha256sums.txt` | sha256 of the zip **and** of the four files inside it | < 1 KB |
+
+Inside the zip (unpacks to `AquariusTerimage/`):
+
+| File | Exact size (bytes) | MB (decimal) | Folder |
+|---|---|---|---|
+| `aquarius_ternary_step260000_base3.safetensors` | 152,990,556 | 152.99 | `portable/` |
+| `diffusion_model_step260000.safetensors` | 323,476,536 | 323.48 | `diffusion_model/` |
+| `model_int8.safetensors` | 755,557,000 | 755.56 | `text_encoder/` |
+| `VAE.safetensors` | 334,643,276 | 334.64 | `VAE/` |
+
+Source folder that gets zipped (do not delete until the release is verified):
 
 ```
-D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/portable/aquarius_ternary_step260000_base3.safetensors
-D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/diffusion_model/diffusion_model_step260000.safetensors
-D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/text_encoder/model_int8.safetensors
-D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimageDemo/VAE/VAE.safetensors
+D:/AI_Library_D/Aquarius20261004/04_models/AquariusTerimage/
 ```
 
 ## Local staging — READY TO UPLOAD (prepared 2026-10-04)
 
-`D:/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/` contains everything
-the release needs, already sha256-verified against the archive originals:
+`D:/AI_Library_D/发布/GitHub/Release/` holds everything the release needs:
 
-- the four weight files (exact byte sizes as in the table above)
-- `sha256sums.txt` — publish as a **5th asset** so users can verify downloads
+- `AquariusTerimage-v1.0-demo.zip` — the release asset
+- `sha256sums.txt` — publish as the 2nd asset (covers the zip and the four files inside)
 - `release_notes.md` — use as the `--notes-file` for the release
-- `upload_release.sh` — one-shot: creates tag v1.0 + uploads all 5 assets
+- `upload_release.sh` — one-shot: creates tag `v1.0` + uploads both assets
   (retry-safe, `--clobber` on re-run; needs `gh` authenticated)
 
-After the repo is pushed, run:
+The git working tree for the push is `D:/AI_Library_D/发布/GitHub/Repo/` (its `origin`
+is already set to `AquariusTerimage.git`). After the repo is pushed:
 
 ```
-bash /d/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/upload_release.sh
+bash "/d/AI_Library_D/发布/GitHub/Release/upload_release.sh"
 ```
 
-## Suggested release commands
-
-```bash
-git init -b main
-git add .
-git commit -m "Aquarius: natively ternary text-to-image diffusion model (step 260,000)"
-git remote add origin https://github.com/JunyiDu2009/AquariusImage.git
-git push -u origin main
-
-gh release create v1.0 --title "Aquarius Terimage - step 260,000 weights" --notes "
-Four weight files for the 558M natively-ternary text-to-image model.
-Place each file in the folder named in the 'Put it in' column of README.md.
-Expected-output notice: images are blurry scene compositions without recognizable
-objects - this is the documented state of this checkpoint (report section 7.1).
-" 
-gh release upload v1.0 \
-  aquarius_ternary_step260000_base3.safetensors \
-  diffusion_model_step260000.safetensors \
-  model_int8.safetensors \
-  VAE.safetensors
-```
-
-(Upload the four files from the archive paths above; they are NOT inside the repo
-working tree, by design.)
+> Superseded: `D:/AI_Library_D/Aquarius20261004/AquariusImage-release-assets/` staged the
+> four files as four *separate* assets (the earlier plan). The self-contained zip is now
+> the chosen single-asset route; the old staging folder can be reclaimed once this release
+> is verified.
 
 ## Hugging Face mirror (DECIDED 2026-10-04)
 
-The four weight files are being published on a **Hugging Face model repo** in
-addition to the GitHub Release assets (report §9 refers to this mirror; the
-canonical download links live in `README.md` / `README_zh.md`). Once the HF
-upload is live, add the model-card URL to the "Mirror" note under the Weights
-table in both READMEs. Everything else in the repo stays unchanged — the
-loaders only care about the local file paths.
+The same package is also being published on a **Hugging Face model repo** (the technical
+report §9 points at it; the canonical download links live in `README.md` / `README_zh.md`).
+Once the HF upload is live, add the model-card URL to the "Mirror" note under the Weights
+section in both READMEs.
 
 ## Pre-push sanity checks
 
 ```bash
+cd /d/AI_Library_D/发布/GitHub/Repo
+
 # nothing over 100 MB tracked in git (expect the largest to be tokenizer.json, 12.8 MB)
 git ls-files -z | xargs -0 du -b 2>/dev/null | sort -rn | head -5
 
-# tracked repo size (expect roughly 60-65 MB total)
-git count-objects -vH
+# remote points at the right repo
+git remote -v
+
+# staged asset integrity
+cd "/d/AI_Library_D/发布/GitHub/Release" && sha256sum -c sha256sums.txt
 ```
+
+Note: the staging path contains the Chinese folder name `发布`; `upload_release.sh`
+resolves its own directory first, so it works regardless of the caller's locale.

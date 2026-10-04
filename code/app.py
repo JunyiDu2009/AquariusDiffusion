@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""AquariusTerimageDemo -- Gradio web UI (bilingual: Chinese / English).
+"""Aquarius Terimage -- Gradio web UI (bilingual: Chinese / English).
 
 The whole interface is bilingual and switches with a single button in the top
 right.  The run log is localised too: the engine emits precise English status
@@ -58,7 +58,7 @@ T = {
     "zh": {
         "btn_lang": "🌐 English",
         "header": (
-            "# AquariusTerimageDemo · 原生三值（ternary）文生图\n"
+            "# Aquarius Terimage · 原生三值（ternary）文生图\n"
             "**558M 参数，权重从第 0 步起就活在量化空间（NLT）。**"
             "本包内置 **step 260,000 = 28.70 轮**的最终检查点。出图是**模糊的场景构图**"
             "（能看出天空／地面分层、色调被提示词驱动），但**认不出具体物体** —— "
@@ -97,7 +97,7 @@ T = {
     "en": {
         "btn_lang": "🌐 中文",
         "header": (
-            "# AquariusTerimageDemo - native ternary text-to-image\n"
+            "# Aquarius Terimage - native ternary text-to-image\n"
             "**558M parameters, weights live in the quantized space from step 0 (NLT).** "
             "This bundle ships the final checkpoint at **step 260,000 = 28.70 epochs**. "
             "Output is **blurry scene composition** (sky / ground layering and colour tone "
@@ -418,7 +418,7 @@ def build_ui(engine):
     lang_state = gr.Textbox(value="zh", visible=False, label="lang")
     on_generate, on_release, on_probe, on_open_dir = make_handlers(engine, lang_state)
 
-    with gr.Blocks(title="AquariusTerimageDemo") as demo:
+    with gr.Blocks(title="Aquarius Terimage") as demo:
         with gr.Row():
             with gr.Column(scale=6):
                 header = gr.Markdown(T["zh"]["header"])
@@ -505,7 +505,7 @@ def build_ui(engine):
 # --------------------------------------------------------------------------
 def self_test(engine, probe_only=False):
     print("=" * 68)
-    print("AquariusTerimageDemo engine self-check")
+    print("Aquarius Terimage engine self-check")
     print("=" * 68)
     t0 = time.time()
     step, ema = engine.peek_ckpt()
@@ -535,7 +535,7 @@ def torch_peak():
 
 # --------------------------------------------------------------------------
 def main():
-    ap_arg = argparse.ArgumentParser(description="AquariusTerimageDemo (Gradio UI)")
+    ap_arg = argparse.ArgumentParser(description="Aquarius Terimage (Gradio UI)")
     ap_arg.add_argument("--host", default="127.0.0.1", help="bind address")
     ap_arg.add_argument("--port", type=int, default=7860)
     ap_arg.add_argument("--share", action="store_true",

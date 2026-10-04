@@ -85,7 +85,7 @@ def _pick(*cands):
 
 # Standalone folder: TE/, VAE/, checkpoints/ sit right next to the script.
 # Repo: TE/VAE live under Aquarius_cloud/, checkpoints at the root.
-# The delivery package ("AquariusTerimageDemo") uses **ASCII category folders**:
+# The delivery package ("AquariusTerimage") uses **ASCII category folders**:
 # text_encoder/ , diffusion_model/ , VAE/ , and VAE/ holds **exactly one
 # .safetensors** (per the "model file only" requirement).
 # Both layouts are listed below so the repo and the package share one code path.

@@ -612,7 +612,7 @@ actually in effect".
 ## 9. Reproduction
 
 - **Code**: the complete training, packing, fused-kernel inference and evaluation scripts
-  are open-sourced at **https://github.com/JunyiDu2009/AquariusImage** (for the
+  are open-sourced at **https://github.com/JunyiDu2009/AquariusTerimage** (for the
   cross-machine reproduction constraints see §4.2).
 - **Model weights**: the base-3 packed UNet (152.99 MB), the int4 runtime artifact
   (323.48 MB), the int8 text encoder (755.56 MB) and the fp16 VAE (334.64 MB) are

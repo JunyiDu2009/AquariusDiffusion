@@ -1,10 +1,12 @@
-# Aquarius —— 从零开始的原生三值文生图扩散模型
+# Aquarius Terimage —— 从零开始的原生三值文生图扩散模型
 
 **原生低比特训练（NLT）** · 558,347,012 参数 · **152.99 MB** 单文件模型（2.192 bpw）· 附完整技术报告
 
 [English](README.md) | 中文
 
 **模型名：Aquarius Terimage** —— 属于 **AquariusDiffusion** 系列（原生低比特文生图扩散）。
+本仓库（`AquariusTerimage`）是**三值**成员；计划中的**二值**对应版（`AquariusBinimage`）
+**尚未训练**（算力经费不足，见报告 §7.1）。
 
 ---
 
@@ -65,10 +67,10 @@
 ## 仓库结构
 
 ```
-AquariusImage/
+AquariusTerimage/
 ├── code/                  全部源代码（推理 + 训练 + 打包 + 评测）
 ├── text_encoder/          int8 文本编码器的 tokenizer 与配置伴生文件
-│                          （model_int8.safetensors 本体从 Releases 下载）
+│                          （model_int8.safetensors 本体在发布整包内）
 ├── diffusion_model/       （空 —— 把 int4 运行时模型放进来）
 ├── portable/              （空 —— 把 base-3 母版模型放进来）
 ├── VAE/                   （空 —— 把 SD1.5 VAE 放进来）
@@ -79,8 +81,9 @@ AquariusImage/
 └── README.md
 ```
 
-`text_encoder/` 伴生文件 + 三个空权重文件夹刻意保持与可运行演示包相同的布局：
-从 **Releases** 下载四个权重文件放进对应文件夹后，开箱即用。
+`text_encoder/` 伴生文件 + 三个空权重文件夹刻意保持与发布整包内相同的布局：
+解压 `AquariusTerimage-v1.0-demo.zip` 后即可开箱即用（仓库里保留这些文件夹，是为了手动
+放置四个权重文件时同样可用）。
 
 ## 快速开始
 
@@ -92,7 +95,7 @@ pip install torch==2.7.1 --index-url https://download.pytorch.org/whl/cu128
 pip install -r requirements.txt
 ```
 
-从 **Releases** 下载四个权重文件（见下表）放入对应目录，然后：
+从 **Releases** 下载 **`AquariusTerimage-v1.0-demo.zip`** 并解压（见下表），然后：
 
 | Windows | macOS / Linux |
 |---|---|
@@ -114,16 +117,23 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 文本编码器权重以 int8 形态存储、在量化空间内重建 —— `transformers.from_pretrained`
 读不了这个文件，所以才有 `code/load_te.py`（已接进 `app.py` / `aq_play.py`，无需额外操作）。
 
-### 权重下载（GitHub Releases，单文件均 ≤ 2 GB）
+### 权重下载 —— Releases 上的单个自包含整包
 
-| Release 资产 | 体积 | 放到 |
+| Release 资产 | 体积 | 内容 |
 |---|---|---|
-| `aquarius_ternary_step260000_base3.safetensors` | 152.99 MB | `portable/` |
+| `AquariusTerimage-v1.0-demo.zip` | 约 1.5 GB | 四个权重文件 **+** 开箱即用的中英双语 Gradio 界面 —— 解压后双击 `run_ui.bat`（Windows）或 `cd AquariusTerimage && python app.py` |
+| `sha256sums.txt` | < 1 KB | 校验和，供你核对下载完整性 |
+
+整包解压后是一个名为 `AquariusTerimage/` 的文件夹，布局与本仓库的权重文件夹完全一致：
+
+| 包内文件 | 体积 | 放到 |
+|---|---|---|
+| `aquarius_ternary_step260000_base3.safetensors`（base-3 母版，跨平台） | 152.99 MB | `portable/` |
 | `diffusion_model_step260000.safetensors`（int4 CUDA 运行时） | 323.48 MB | `diffusion_model/` |
 | `model_int8.safetensors`（文本编码器，Qwen3.5-0.8B 语言塔，int8） | 755.56 MB | `text_encoder/` |
 | `VAE.safetensors`（SD1.5 VAE，fp16） | 334.64 MB | `VAE/` |
 
-> **镜像**：同一组权重文件也会发布在 **Hugging Face**；HF 模型卡链接上传完成后更新在这里。
+> **镜像**：同一整包也会发布在 **Hugging Face**；HF 链接上传完成后更新在这里。
 > 本 README 始终是下载链接的权威出处。
 
 > 不要把 base-3 母版丢进 `diffusion_model/` —— 该目录按「最高步数」glob 选模型，
@@ -159,7 +169,7 @@ python aq_play.py "a cat on a chair" --res 512 --steps 20   # 命令行，无需
 - [docs/Aquarius_Technical_Report_EN.pdf](docs/Aquarius_Technical_Report_EN.pdf) · [.md](docs/Aquarius_Technical_Report_EN.md)
   - 若只读一节：**§5.6「六条可迁移的实测结论」**。
 - [docs/stages.json](docs/stages.json) —— 进化对照条的阶段登记表
-- [RELEASE.md](RELEASE.md) —— 维护者说明：四个权重文件如何发布
+- [RELEASE.md](RELEASE.md) —— 维护者说明：发布整包如何上传
 
 ## 许可
 

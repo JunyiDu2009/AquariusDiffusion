@@ -1,6 +1,6 @@
 @echo off
 REM ---------------------------------------------------------------------------
-REM AquariusTerimageDemo -- text2img web UI launcher (Windows)
+REM Aquarius Terimage -- text2img web UI launcher (Windows)
 REM
 REM Double-click this file. It runs app.py in this folder.
 REM
@@ -22,7 +22,7 @@ setlocal
 cd /d "%~dp0"
 
 echo ===========================================================
-echo   AquariusTerimageDemo  -  text2img web UI
+echo   Aquarius Terimage  -  text2img web UI
 echo -----------------------------------------------------------
 echo   Model: a ternary UNet at training step 260000.
 echo   Output is still blurry scene texture WITHOUT recognizable

@@ -510,7 +510,7 @@ batch=1、较小的空间尺寸与内核启动开销把 5090 压到了约 2% 的
 ## 9. 复现入口
 
 - **代码**：训练、打包、融合内核推理与评测脚本完整开源：
-  **https://github.com/JunyiDu2009/AquariusImage**（跨机器复现的参数约束见 §4.2）。
+  **https://github.com/JunyiDu2009/AquariusTerimage**（跨机器复现的参数约束见 §4.2）。
 - **模型权重**：UNet base-3 打包件（152.99 MB）、运行时 int4 件（323.48 MB）、
   文本编码器 int8（755.56 MB）与 VAE fp16（334.64 MB）上传至 Hugging Face，
   下载链接以仓库 README 为准。
