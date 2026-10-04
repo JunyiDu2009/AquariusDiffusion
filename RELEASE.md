@@ -41,6 +41,26 @@ fix lands in the repo, re-copy it here and re-run the upload. `sha256sums.txt` c
 from the release page); `upload_release.sh` resolves each name to its folder before
 verifying.
 
+## STATUS — code is LIVE (2026-10-04)
+
+Pushed and verified:
+
+- **https://github.com/JunyiDu2009/AquariusTerimage** (public, branch `main`, 15 topics,
+  description set). README renders with all figures; `docs/` carries both report PDFs.
+- Push command that works on this machine (Windows schannel blocks on the CRL check, so
+  the revocation check must be turned off for the command — `gh` is not authenticated here,
+  but the stored git credential for github.com **is** JunyiDu2009's token):
+
+```bash
+cd /d/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/AquariusImage/AquariusTerimage
+git -c http.schannelCheckRevoke=false push -u origin main
+```
+
+- **Still pending: the Release assets** (3 weight files ≈ 1.24 GB + the loose UI files).
+  Measured uplink to GitHub from here is ~70 KB/s, i.e. several hours — do it from a fast
+  connection (browser drag-and-drop onto a new release, or `upload_release.sh` after
+  `gh auth login`).
+
 ## Local staging — READY TO UPLOAD (prepared 2026-10-04)
 
 `D:/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/`
