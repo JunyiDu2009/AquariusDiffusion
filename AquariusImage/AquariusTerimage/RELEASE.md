@@ -60,10 +60,14 @@ git -c credential.helper= -c http.schannelCheckRevoke=false \
     push origin main
 ```
 
-- **Still pending: the Release assets** (3 weight files ≈ 1.24 GB + the loose UI files).
-  Measured uplink to GitHub from here is ~70 KB/s, i.e. several hours — do it from a fast
-  connection (browser drag-and-drop onto a new release, or `upload_release.sh` after
-  `gh auth login`).
+- **Release `v1.0` is LIVE** (2026-10-05): 20 assets — the three weight files plus the
+  loose UI/launcher and the text-encoder sidecars. Uploaded with `gh` at ~1 MB/s; the
+  earlier "~70 KB/s, several hours" reading was an artefact of the credential manager
+  stalling the transfer.
+- Auth on this machine: **`gh auth login --web` (device code)** — the Git Credential
+  Manager pops an account-selection dialog and hangs git, so never rely on it. Take the
+  token with `gh auth token` (for API calls or the `http.extraHeader` push);
+  **do not call `git credential fill`**.
 
 ## Local staging — READY TO UPLOAD (prepared 2026-10-04)
 
