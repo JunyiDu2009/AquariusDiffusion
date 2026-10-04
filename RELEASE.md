@@ -64,12 +64,14 @@ gh release upload v1.0 \
 (Upload the four files from the archive paths above; they are NOT inside the repo
 working tree, by design.)
 
-## Alternative: Hugging Face
+## Hugging Face mirror (DECIDED 2026-10-04)
 
-If preferred, upload the same four files to a Hugging Face model repo instead of
-(or in addition to) Release assets, then replace the "Weights" table links in
-`README.md` / `README_zh.md` with the HF URLs. Everything else in the repo stays
-unchanged — the loaders only care about the local file paths.
+The four weight files are being published on a **Hugging Face model repo** in
+addition to the GitHub Release assets (report §9 refers to this mirror; the
+canonical download links live in `README.md` / `README_zh.md`). Once the HF
+upload is live, add the model-card URL to the "Mirror" note under the Weights
+table in both READMEs. Everything else in the repo stays unchanged — the
+loaders only care about the local file paths.
 
 ## Pre-push sanity checks
 
