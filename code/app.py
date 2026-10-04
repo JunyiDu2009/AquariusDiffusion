@@ -288,17 +288,19 @@ def toggle_state(cur_lang, cur_preset, cur_w, cur_h):
 # --------------------------------------------------------------------------
 # Generation callback (a generator: streams log lines to the UI while running)
 # --------------------------------------------------------------------------
-def make_handlers(engine, lang_state=None):
-    """`lang_state` is a hidden Textbox holding "zh"/"en"; the callbacks read it so
-    the log and the validation messages come out in the active language."""
-    def _lang():
-        try:
-            return lang_state.value if lang_state is not None else "en"
-        except Exception:                                     # noqa: BLE001
-            return "en"
+def make_handlers(engine):
+    """The callbacks take the hidden language Textbox as an explicit input (`lang`),
+    so the log lines and the validation messages come out in the active language.
 
-    def on_generate(prompt_text, steps, width, height, seed, per_prompt, lowvram):
-        lg = _lang()
+    ⚠️ Do NOT read `lang_state.value` off the component object instead: Gradio keeps
+    a component's live value in the frontend/session and never writes it back to the
+    Python object, so `.value` stays at its *initial* value forever.  Measured
+    2026-10-04 with gradio 6.19: after a toggle set the box to "en", the object still
+    reported "zh".
+    """
+
+    def on_generate(prompt_text, steps, width, height, seed, per_prompt, lowvram, lang):
+        lg = lang if lang in T else "en"
         if not _LOCK.acquire(blocking=False):
             yield T[lg]["warn_busy"], _LAST["gallery"], ""
             return
@@ -361,8 +363,8 @@ def make_handlers(engine, lang_state=None):
         finally:
             _LOCK.release()
 
-    def on_release():
-        lg = _lang()
+    def on_release(lang):
+        lg = lang if lang in T else "en"
         msg = engine.release()
         _LAST["gallery"] = []
         return _loc(msg, lg) + "\n" + T[lg]["reload_note"], [], ""
@@ -411,14 +413,18 @@ def make_handlers(engine, lang_state=None):
 def build_ui(engine):
     import gradio as gr
 
-    # ⚠️ 用「隐藏的 Textbox」而不是 gr.State 当语言状态载体。
-    #    原因：Gradio 不会把「含 gr.State 输入」的事件导出成 API 端点 ⇒
-    #    ① gradio_client 无法调用、无法自动化测试；
-    #    ② 出问题时也没有可复现的调用路径。隐藏 Textbox 没有这个限制。
-    lang_state = gr.Textbox(value="zh", visible=False, label="lang")
-    on_generate, on_release, on_probe, on_open_dir = make_handlers(engine, lang_state)
-
     with gr.Blocks(title="Aquarius Terimage") as demo:
+        # ⚠️ 这个隐藏 Textbox 必须创建在 Blocks 上下文「之内」。
+        #    在 Blocks 之外创建的组件不会进入布局组件表（config["components"]），
+        #    但事件仍然引用它的 component id ⇒ 前端找不到该组件，**一次点击就会让
+        #    整片输出变成错误态**（2026-10-04 实测：点击语言切换后所有组件报错，
+        #    `toggle_state` 的 inputs/outputs 都含一个布局里不存在的 id）。
+        #    另外：用「隐藏 Textbox」而不是 gr.State 当语言载体，是因为 Gradio 不会把
+        #    「含 gr.State 输入」的事件导出成 API 端点 ⇒ ① gradio_client 无法调用、
+        #    无法自动化测试；② 出问题时也没有可复现的调用路径。隐藏 Textbox 没有这个限制。
+        lang_state = gr.Textbox(value="zh", visible=False, label="lang")
+        on_generate, on_release, on_probe, on_open_dir = make_handlers(engine)
+
         with gr.Row():
             with gr.Column(scale=6):
                 header = gr.Markdown(T["zh"]["header"])
@@ -476,11 +482,11 @@ def build_ui(engine):
                      btn_rel, tips, log, gallery, outdir, btn_probe, btn_open],
         )
 
-        gen_inputs = [prompt, steps, width, height, seed, per_prompt, lowvram]
+        gen_inputs = [prompt, steps, width, height, seed, per_prompt, lowvram, lang_state]
         btn.click(on_generate, inputs=gen_inputs, outputs=[log, gallery, outdir])
         prompt.submit(on_generate, inputs=gen_inputs,
                       outputs=[log, gallery, outdir])
-        btn_rel.click(on_release, outputs=[log, gallery, outdir])
+        btn_rel.click(on_release, inputs=[lang_state], outputs=[log, gallery, outdir])
         btn_probe.click(on_probe, outputs=[info])
         btn_open.click(on_open_dir, outputs=[probe_msg])
 
