@@ -214,7 +214,7 @@ COCO train2017，**118,287** 张。VAE latent 与文本 embedding 均为**预计
 
 ![图 3](../figures/zh/fig3_clip_ratio.png)
 
-**图 3**：clip_ratio 全序列（16 个采样点，截至 step 240,000）。**注：图 5 对照条为 18 个采样点（含 250k / 260k），与本节序列不是同一集合，两图不可逐点对照。**
+**图 3**：clip_ratio 全序列（16 个采样点，截至 step 240,000）。**注：图 6 对照条为 18 个采样点（含 250k / 260k），与本节序列不是同一集合，两图不可逐点对照。**
 
 | 区间 | 斜率 | t 值 | 判读 |
 |---|---|---|---|
@@ -238,17 +238,24 @@ COCO train2017，**118,287** 张。VAE latent 与文本 embedding 均为**预计
 因此修正后的判读是：**「达不到可用发布水平」的结论不变**（4 条 caption 里只有 1 条
 真正认出了主体，且样本量仅 4 张 × 1 个种子），但 **「结构性学习已经发生」是确凿的**。
 
-![图 5](../figures/zh/fig5_evolution.png)
+![图 5](../figures/zh/fig5_sample_sunset.png)
 
-**图 5**：阶段对照条（**18 个采样点**：step 9,058 + 40,000 + 110,000~260,000 每 10k），固定 10 条 COCO caption，640×640，seed 100000+i。
+**图 5**：交付检查点（step 260,000）的一张真实 512×512 出图，提示词
+`sunset over the ocean.`（20 步 DDIM，不夹潜向量）。
+它大致代表了模型真正学到的东西——**色调、天／海层次与整体氛围**；
+但具体物体仍不可靠：天空中那道深色形体只是近似轮廓，并非可依赖的主体。
+
+![图 6](../figures/zh/fig6_evolution.png)
+
+**图 6**：阶段对照条（**18 个采样点**：step 9,058 + 40,000 + 110,000~260,000 每 10k），固定 10 条 COCO caption，640×640，seed 100000+i。
 **注：该条为较早采样协议（含潜向量 clamp）；行内标注的数值即该协议下的 `clip_ratio`（与 §5.2 同一指标，读数一致：9,058 → 0.115、170,000 → 0.378（峰值）、260,000 → 0.291），仅可用于阶段间的相对趋势。**
 另：step 170,000 前后采用了不同的权重打包格式（此前 b2/fp32、此后 b3/fp16），跨该点的比较需谨慎。
 
 ### 5.3 量化代价
 
-![图 6](../figures/zh/fig6_modes.png)
+![图 7](../figures/zh/fig7_modes.png)
 
-**图 6**：三种权重模式在 step 40,000 的同配方对照。
+**图 7**：三种权重模式在 step 40,000 的同配方对照。
 
 | 模式 | clip_ratio @40k | 交付体积 |
 |---|---|---|
@@ -261,9 +268,9 @@ COCO train2017，**118,287** 张。VAE latent 与文本 embedding 均为**预计
 
 ### 5.4 效率：带宽、显存与延迟
 
-![图 7](../figures/zh/fig7_bitwidth.png)
+![图 8](../figures/zh/fig8_bitwidth.png)
 
-**图 7**：每参数每前向字节数与常驻体积。
+**图 8**：每参数每前向字节数与常驻体积。
 
 | 方案 | 每参数每前向字节 | 常驻体积 |
 |---|---|---|
@@ -281,9 +288,9 @@ COCO train2017，**118,287** 张。VAE latent 与文本 embedding 均为**预计
 > `int8 常驻·未融合` 行按**量化参数量** 540,147,712 × 5 B 导出（= 2700.74 MB）；
 > 两行分母不同，故与名义值存在差异。
 
-![图 8](../figures/zh/fig8_optim.png)
+![图 9](../figures/zh/fig9_optim.png)
 
-**图 8**：三项显存/延迟优化。从打包文件直接构建使建模型峰值 **1158 → 362 MB
+**图 9**：三项显存/延迟优化。从打包文件直接构建使建模型峰值 **1158 → 362 MB
 （−68.7%）**，耗时 9.0 → 3.3 s，且与旧路径**输出逐像素相同（L1 = 0.0000）**；
 VAE 解码改 fp16 使峰值 589 → 332 MB；把整条 20 步 DDIM 捕获为一张 CUDA Graph 使
 256² 单图延迟 **1013 → 218 ms（4.65×）**，且**回放与 eager 逐位一致（最大差 = 0）**。
@@ -295,9 +302,9 @@ skipped 0 - never pushed bf16 onto the card`。
 
 ### 5.5 单步耗时分解：瓶颈在主机侧，不在 GPU
 
-![图 9](../figures/zh/fig9_bottleneck.png)
+![图 10](../figures/zh/fig10_bottleneck.png)
 
-**图 9**：一次训练步的实测去向（均值 0.6545 s/步，图中 686 ms 为单步快照）。
+**图 10**：一次训练步的实测去向（均值 0.6545 s/步，图中 686 ms 为单步快照）。
 
 | 项 | 耗时 | 占比 |
 |---|---|---|
@@ -603,11 +610,12 @@ open-source, 2024. https://github.com/dropbox/gemlite
 | 图 2 | `figures/zh/fig2_training.png` | 训练全景（loss / act / LR） |
 | 图 3 | `figures/zh/fig3_clip_ratio.png` | clip_ratio 全序列与饱和 |
 | 图 4 | `figures/zh/fig4_samples.png` | 真实 GPU 出图（512²） |
-| 图 5 | `figures/zh/fig5_evolution.png` | 阶段对照条（18 个采样点，较早协议） |
-| 图 6 | `figures/zh/fig6_modes.png` | 三模式量化代价 |
-| 图 7 | `figures/zh/fig7_bitwidth.png` | 带宽与常驻体积账 |
-| 图 8 | `figures/zh/fig8_optim.png` | 三项显存/延迟优化 |
-| 图 9 | `figures/zh/fig9_bottleneck.png` | 单步耗时分解（主机侧瓶颈） |
+| 图 5 | `figures/zh/fig5_sample_sunset.png` | 单张真实出图（提示词 `sunset over the ocean.`） |
+| 图 6 | `figures/zh/fig6_evolution.png` | 阶段对照条（18 个采样点，较早协议） |
+| 图 7 | `figures/zh/fig7_modes.png` | 三模式量化代价 |
+| 图 8 | `figures/zh/fig8_bitwidth.png` | 带宽与常驻体积账 |
+| 图 9 | `figures/zh/fig9_optim.png` | 三项显存/延迟优化 |
+| 图 10 | `figures/zh/fig10_bottleneck.png` | 单步耗时分解（主机侧瓶颈） |
 
 英文版对应 `figures/en/`，文件名一致。
 生成脚本：`code/_t_report_figs.py`（数据源：训练日志 + `out/_sat_check.json` + 项目实测账本）。

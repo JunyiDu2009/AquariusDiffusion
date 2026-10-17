@@ -70,7 +70,7 @@ Two conclusions, both honest:
 
 Evolution strip (18 sampling points, fixed 10-caption protocol, earlier protocol — only comparable within it):
 
-<p><img src="figures/en/fig5_evolution.png" width="100%" alt="evolution strip" /></p>
+<p><img src="figures/en/fig6_evolution.png" width="100%" alt="evolution strip" /></p>
 
 100 random captions at 640×640: [figures/samples_100captions_web.png](figures/samples_100captions_web.png)
 

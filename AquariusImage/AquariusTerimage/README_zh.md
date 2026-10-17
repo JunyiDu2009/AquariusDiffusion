@@ -66,7 +66,7 @@
 
 模型进化对照条（18 个采样点，固定 10 条 caption 协议，较早协议 —— 仅在同协议内可比）：
 
-<p><img src="figures/zh/fig5_evolution.png" width="100%" alt="进化对照条" /></p>
+<p><img src="figures/zh/fig6_evolution.png" width="100%" alt="进化对照条" /></p>
 
 100 条随机 caption @ 640×640 出图网格：[figures/samples_100captions_web.png](figures/samples_100captions_web.png)
 

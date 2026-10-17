@@ -251,7 +251,7 @@ the checkpoint's `base_lrs` on resume**. **No recurrence in the 190k steps since
 
 ![Figure 3](../figures/en/fig3_clip_ratio.png)
 
-**Figure 3.** The full clip_ratio series (16 sampling points, up to step 240,000). **Note: the Figure 5 stage strip has 18 sampling points (including 250k / 260k), a different set from this series, so the two figures cannot be compared point by point.**
+**Figure 3.** The full clip_ratio series (16 sampling points, up to step 240,000). **Note: the Figure 6 stage strip has 18 sampling points (including 250k / 260k), a different set from this series, so the two figures cannot be compared point by point.**
 
 | Range | Slope | t | Reading |
 |---|---|---|---|
@@ -281,17 +281,25 @@ The corrected reading is therefore: **"below a usable release bar" still stands*
 (only 1 of 4 captions truly produced a recognizable subject, on a sample of 4 images ×
 1 seed), but **"structural learning has taken place" is now firmly established**.
 
-![Figure 5](../figures/en/fig5_evolution.png)
+![Figure 5](../figures/en/fig5_sample_sunset.png)
 
-**Figure 5.** Stage strip (**18 sampling points**: step 9,058 + 40,000 + 110,000-260,000 in steps of 10k), 10 fixed COCO captions, 640×640, seed 100000+i.
+**Figure 5.** A single real 512×512 output of the delivered checkpoint (step 260,000),
+prompt `sunset over the ocean.` (20 DDIM steps, latent vectors not clamped).
+It is representative of what the model genuinely learned — **colour tone, sky/sea
+layering and overall atmosphere** — while concrete objects stay unreliable: the dark
+shape in the sky is only an approximate silhouette, not a dependable subject.
+
+![Figure 6](../figures/en/fig6_evolution.png)
+
+**Figure 6.** Stage strip (**18 sampling points**: step 9,058 + 40,000 + 110,000-260,000 in steps of 10k), 10 fixed COCO captions, 640×640, seed 100000+i.
 **Note: this strip uses the earlier sampling protocol (with latent clamping); the value annotated beside each row is the `clip_ratio` under that protocol** — the same metric as §5.2, and the readings agree (9,058 -> 0.115; 170,000 -> 0.378, the peak; 260,000 -> 0.291), so only the *relative* trend between stages is meaningful.
 Note also that the weight packing format changed at step 170,000 (b2/fp32 before, b3/fp16 after), so comparisons across that point deserve care.
 
 ### 5.3 Quantization cost
 
-![Figure 6](../figures/en/fig6_modes.png)
+![Figure 7](../figures/en/fig7_modes.png)
 
-**Figure 6.** The three weight modes at step 40,000, same recipe and data.
+**Figure 7.** The three weight modes at step 40,000, same recipe and data.
 
 | Mode | clip_ratio @40k | Deliverable size |
 |---|---|---|
@@ -305,9 +313,9 @@ full-precision reference**. At this scale (558M parameters) and data budget,
 
 ### 5.4 Efficiency: bandwidth, memory, latency
 
-![Figure 7](../figures/en/fig7_bitwidth.png)
+![Figure 8](../figures/en/fig8_bitwidth.png)
 
-**Figure 7.** Bytes per parameter per forward pass and resident footprint.
+**Figure 8.** Bytes per parameter per forward pass and resident footprint.
 
 | Scheme | Bytes/param/forward | Resident |
 |---|---|---|
@@ -327,9 +335,9 @@ full-precision reference**. At this scale (558M parameters) and data budget,
 > 540,147,712 x 5 B (= 2700.74 MB). Different denominators, hence the small mismatch
 > with the nominal figures.
 
-![Figure 8](../figures/en/fig8_optim.png)
+![Figure 9](../figures/en/fig9_optim.png)
 
-**Figure 8.** Three memory/latency optimizations. Building directly from the packed file
+**Figure 9.** Three memory/latency optimizations. Building directly from the packed file
 drops the model-build peak from **1158 to 362 MB (−68.7%)** and 9.0 to 3.3 s, with
 **pixel-identical output (L1 = 0.0000)**; switching VAE decoding to fp16 drops that peak
 from 589 to 332 MB; capturing the whole 20-step DDIM as one CUDA Graph drops 256² latency
@@ -344,9 +352,9 @@ bf16 onto the card`.
 
 ### 5.5 Step-time breakdown: the host, not the GPU, is the bottleneck
 
-![Figure 9](../figures/en/fig9_bottleneck.png)
+![Figure 10](../figures/en/fig10_bottleneck.png)
 
-**Figure 9.** Where one training step actually goes (long-run mean 0.6545 s/step; the 686 ms in the chart is a single-step snapshot).
+**Figure 10.** Where one training step actually goes (long-run mean 0.6545 s/step; the 686 ms in the chart is a single-step snapshot).
 
 | Item | Time | Share |
 |---|---|---|
@@ -709,11 +717,12 @@ Ascend NPUs," open-source, 2025. https://github.com/triton-lang/triton-ascend
 | Fig. 2 | `figures/en/fig2_training.png` | Training panorama (loss / act / LR) |
 | Fig. 3 | `figures/en/fig3_clip_ratio.png` | clip_ratio series and saturation |
 | Fig. 4 | `figures/en/fig4_samples.png` | Real GPU outputs (512²) |
-| Fig. 5 | `figures/en/fig5_evolution.png` | Stage strip (18 sampling points, earlier protocol) |
-| Fig. 6 | `figures/en/fig6_modes.png` | Quantization cost, three modes |
-| Fig. 7 | `figures/en/fig7_bitwidth.png` | Bandwidth and residency accounting |
-| Fig. 8 | `figures/en/fig8_optim.png` | Three memory/latency optimizations |
-| Fig. 9 | `figures/en/fig9_bottleneck.png` | Step-time breakdown (host-side bottleneck) |
+| Fig. 5 | `figures/en/fig5_sample_sunset.png` | Single real output (prompt `sunset over the ocean.`) |
+| Fig. 6 | `figures/en/fig6_evolution.png` | Stage strip (18 sampling points, earlier protocol) |
+| Fig. 7 | `figures/en/fig7_modes.png` | Quantization cost, three modes |
+| Fig. 8 | `figures/en/fig8_bitwidth.png` | Bandwidth and residency accounting |
+| Fig. 9 | `figures/en/fig9_optim.png` | Three memory/latency optimizations |
+| Fig. 10 | `figures/en/fig10_bottleneck.png` | Step-time breakdown (host-side bottleneck) |
 
 The Chinese edition uses the identically named files under `figures/zh/`.
 Figure generation script: `code/_t_report_figs.py` (sources: training log +
