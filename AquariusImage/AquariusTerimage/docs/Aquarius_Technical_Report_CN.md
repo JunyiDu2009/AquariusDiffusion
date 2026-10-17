@@ -1,3 +1,10 @@
+<div class="cover" align="center">
+  <img alt="cover" src="../figures/zh/fig5_sample_sunset.png" width="68%">
+  <p class="cover-line">Aquarius：从零训练的原生三值文生图扩散模型</p>
+  <p class="cover-sub">原生低比特训练（NLT）· 三值权重 · 融合 int4 内核推理</p>
+  <p class="cover-meta">技术报告 · 最终检查点 step 260,000 · 2026-10-17 · Junyi Du（独立研究）</p>
+</div>
+
 # Aquarius：从零训练的原生三值文生图扩散模型
 
 ### 训练可行性、融合内核推理与饱和分析

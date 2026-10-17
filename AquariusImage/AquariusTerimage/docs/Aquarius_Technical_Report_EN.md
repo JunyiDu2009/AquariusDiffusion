@@ -1,3 +1,10 @@
+<div class="cover" align="center">
+  <img alt="cover" src="../figures/en/fig5_sample_sunset.png" width="68%">
+  <p class="cover-line">Aquarius: A From-Scratch, Natively Ternary, Text-to-Image Diffusion Model</p>
+  <p class="cover-sub">Native low-bit training (NLT) · ternary weights · fused int4 kernel inference</p>
+  <p class="cover-meta">Technical report · final checkpoint step 260,000 · 2026-10-17 · Junyi Du (independent research)</p>
+</div>
+
 # Aquarius: A From-Scratch, Natively Ternary, Text-to-Image Diffusion Model
 
 ### Training Feasibility, Fused-Kernel Inference, and Saturation Analysis
