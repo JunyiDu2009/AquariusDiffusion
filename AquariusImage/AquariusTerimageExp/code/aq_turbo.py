@@ -1,4 +1,4 @@
-"""Aquarius Terimage Turbo — DMD2-style one-step distillation (simplified).
+"""AquariusTerimageExp Turbo — DMD2-style one-step distillation (simplified).
 
 Setup (per handoff 动作⑧ + user 2026-10-01 22:46 directive):
   teacher : fp-forward of the ternary ckpt_final raw fp32 master (frozen).

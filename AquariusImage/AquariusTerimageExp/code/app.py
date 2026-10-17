@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-"""Aquarius Terimage -- Gradio web UI (bilingual: Chinese / English).
+"""AquariusTerimageExp -- Gradio web UI (bilingual: Chinese / English).
 
 The whole interface is bilingual and switches with a single button in the top
 right.  The run log is localised too: the engine emits precise English status
@@ -108,7 +108,7 @@ T = {
     "zh": {
         "btn_lang": "🌐 English",
         "header": (
-            "# Aquarius Terimage · 原生三值（ternary）文生图\n"
+            "# AquariusTerimageExp · 原生三值（ternary）文生图\n"
             "**558M 参数，权重从第 0 步起就活在量化空间（NLT）。**"
             "本包内置 **step 260,000 = 28.70 轮**的最终检查点。出图是**模糊的场景构图**"
             "（能看出天空／地面分层、色调被提示词驱动），但**认不出具体物体** —— "
@@ -147,7 +147,7 @@ T = {
     "en": {
         "btn_lang": "🌐 中文",
         "header": (
-            "# Aquarius Terimage - native ternary text-to-image\n"
+            "# AquariusTerimageExp - native ternary text-to-image\n"
             "**558M parameters, weights live in the quantized space from step 0 (NLT).** "
             "This bundle ships the final checkpoint at **step 260,000 = 28.70 epochs**. "
             "Output is **blurry scene composition** (sky / ground layering and colour tone "
@@ -473,7 +473,7 @@ def make_handlers(engine):
 def build_ui(engine):
     import gradio as gr
 
-    with gr.Blocks(title="Aquarius Terimage") as demo:
+    with gr.Blocks(title="AquariusTerimageExp") as demo:
         # ⚠️ 这个隐藏 Textbox 必须创建在 Blocks 上下文「之内」。
         #    在 Blocks 之外创建的组件不会进入布局组件表（config["components"]），
         #    但事件仍然引用它的 component id ⇒ 前端找不到该组件，**一次点击就会让
@@ -577,7 +577,7 @@ def build_ui(engine):
 # --------------------------------------------------------------------------
 def self_test(engine, probe_only=False):
     print("=" * 68)
-    print("Aquarius Terimage engine self-check")
+    print("AquariusTerimageExp engine self-check")
     print("=" * 68)
     t0 = time.time()
     step, ema = engine.peek_ckpt()
@@ -607,7 +607,7 @@ def torch_peak():
 
 # --------------------------------------------------------------------------
 def main():
-    ap_arg = argparse.ArgumentParser(description="Aquarius Terimage (Gradio UI)")
+    ap_arg = argparse.ArgumentParser(description="AquariusTerimageExp (Gradio UI)")
     ap_arg.add_argument("--host", default="127.0.0.1", help="bind address")
     ap_arg.add_argument("--port", type=int, default=7860)
     ap_arg.add_argument("--share", action="store_true",

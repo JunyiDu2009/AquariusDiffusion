@@ -1,8 +1,9 @@
 # RELEASE.md — maintainer notes: publishing the release assets
 
 Repository: **`AquariusDiffusion`** — https://github.com/JunyiDu2009/AquariusDiffusion
-(the series). This model lives in its `AquariusImage/AquariusTerimage/` folder;
-model name **Aquarius Terimage**.
+(the series). This model lives in its `AquariusImage/AquariusTerimageExp/` folder;
+model name **AquariusTerimageExp** (the family's first experiment; everything after it
+is binary and named by domain, not by bit-width).
 Licence: code, docs **and the weights** are Apache License 2.0 (see `LICENSE` / `NOTICE`).
 
 The repo deliberately tracks **no file above 12.8 MB** (GitHub's hard per-file push limit
@@ -46,7 +47,7 @@ verifying.
 Pushed and verified:
 
 - **https://github.com/JunyiDu2009/AquariusDiffusion** (public, branch `main`).
-  The model page is `AquariusImage/AquariusTerimage/README.md`; its `docs/` carries both
+  The model page is `AquariusImage/AquariusTerimageExp/README.md`; its `docs/` carries both
   report PDFs.
 - Pushing from this machine needs **two workarounds**: Windows schannel blocks on the CRL
   check, and the interactive **Git Credential Manager must be bypassed** (it pops an
@@ -71,7 +72,7 @@ git -c credential.helper= -c http.schannelCheckRevoke=false \
 
 ## Local staging — READY TO UPLOAD (prepared 2026-10-04)
 
-`D:/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/`
+`D:/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimageExp/`
 **is** the runnable layout — the same shape a user ends up with:
 
 ```
@@ -89,11 +90,11 @@ The git working tree is `D:/AI_Library_D/发布/GitHub/Repo/AquariusDiffusion/` 
 root; `origin` = `AquariusDiffusion.git`). After the repo is pushed:
 
 ```
-bash "/d/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimage/upload_release.sh"
+bash "/d/AI_Library_D/发布/GitHub/Release/AquariusDiffusion/AquariusImage/AquariusTerimageExp/upload_release.sh"
 ```
 
 > Superseded on 2026-10-04 — **do not upload**, kept in `发布/GitHub/_superseded/`:
-> ① `AquariusTerimage-v1.0-demo.zip` (1.59 GB archive that duplicated the UI), and
+> ① `AquariusTerimageExp-v1.0-demo.zip` (1.59 GB archive that duplicated the UI), and
 > ② `diffusion_model_step260000.safetensors` (the prebuilt int4 runtime).
 
 ## Hugging Face mirror (DECIDED 2026-10-04)
