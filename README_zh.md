@@ -8,10 +8,13 @@
 ```
 AquariusDiffusion/
 ├── AquariusImage/                        图像扩散
-│   └── AquariusTerimageExp/              第一个实验：原生三值文生图  ← 已发布
+│   ├── AquariusTerimageExp/              第一个实验：原生三值文生图  ← 已发布
 │       ├── README.md / README_zh.md      模型主页（中英双语，含全部细节）
 │       ├── code/ · docs/ · figures/      代码、技术报告（中英）、报告配图
 │       └── portable/ · text_encoder/ · VAE/   Release 权重文件的落位目录
+│   └── AquariusCodaExp/                  第二个实验：单步像素空间去噪（48M）
+│       ├── README.md / README_zh.md      项目说明（中英）
+│       └── code/ · docs/ · results/      代码、计划书、训练曲线
 ├── AquariusVideo/                        视频扩散（规划中）
 └── AquariusVoice/                        语音 / 音频扩散（规划中）
 ```
@@ -21,6 +24,7 @@ AquariusDiffusion/
 | 模型 | 量化器 | 状态 |
 |---|---|---|
 | [**AquariusTerimageExp**](AquariusImage/AquariusTerimageExp/) | 三值 `{−s, 0, +s}`，每 128 权重一个 fp16 尺度 + STE | **已发布** —— 558,347,012 参数打包成单文件 152.99 MB（2.192 bpw），三值→int4 融合内核逐位精确 |
+| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4（E2M1，per-16 E4M3 scale）· 训练后导出 | **完成训练** —— 48M 单步去噪，76K 步早停，96MB→27.2MB；权重待发布 |
 
 **命名约定（自本仓库起）：模型按域命名，不按位宽命名** —— 所以不再有
 「Terimage / Binimage」成对出现。`AquariusTerimageExp` 是本系列的**第一个实验**，

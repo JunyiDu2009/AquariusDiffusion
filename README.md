@@ -8,10 +8,13 @@ from `AquariusTerimageExp` onward every model trains in the **binary** space `{�
 ```
 AquariusDiffusion/
 ├── AquariusImage/                        image diffusion
-│   └── AquariusTerimageExp/              first experiment: native ternary T2I  <- released
+│   ├── AquariusTerimageExp/              first experiment: native ternary T2I  <- released
 │       ├── README.md / README_zh.md      model page (bilingual, full detail)
 │       ├── code/ · docs/ · figures/      code, technical report (CN/EN), report figures
 │       └── portable/ · text_encoder/ · VAE/   where the Release weight files go
+│   └── AquariusCodaExp/                  second experiment: one-step pixel-space denoising (48M)
+│       ├── README.md / README_zh.md      project page (bilingual)
+│       └── code/ · docs/ · results/      code, training plan, curves
 ├── AquariusVideo/                        video diffusion (planned)
 └── AquariusVoice/                        voice / audio diffusion (planned)
 ```
@@ -21,6 +24,7 @@ AquariusDiffusion/
 | Model | Quantizer | Status |
 |---|---|---|
 | [**AquariusTerimageExp**](AquariusImage/AquariusTerimageExp/) | ternary `{−s, 0, +s}`, one fp16 scale per 128 weights + STE | **released** — 558,347,012 params in a single 152.99 MB file (2.192 bpw), bit-exact int4 fused-kernel runtime |
+| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4 (E2M1, per-16 E4M3 scale) · post-training export | **trained** — 48M one-step denoiser, 76K early-stop, 96MB→27.2MB; weights pending release |
 
 **Naming convention (from this repo onward):** models are named **by domain, not by
 bit-width** — so there is no separate "Terimage / Binimage" pair. `AquariusTerimageExp`
