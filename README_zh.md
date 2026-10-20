@@ -24,7 +24,7 @@ AquariusDiffusion/
 | 模型 | 量化器 | 状态 |
 |---|---|---|
 | [**AquariusTerimageExp**](AquariusImage/AquariusTerimageExp/) | 三值 `{−s, 0, +s}`，每 128 权重一个 fp16 尺度 + STE | **已发布** —— 558,347,012 参数打包成单文件 152.99 MB（2.192 bpw），三值→int4 融合内核逐位精确 |
-| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4（E2M1，per-16 E4M3 scale）· 训练后导出 | **完成训练** —— 48M 单步去噪，76K 步早停，96MB→27.2MB；权重待发布 |
+| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4（E2M1，per-16 E4M3 scale）· 训练后导出 | **完成训练** —— 48M 单步去噪，76K 步早停，96MB→27.2MB；权重见 [Release v0.1-m2](https://github.com/JunyiDu2009/AquariusDiffusion/releases/tag/v0.1-m2/) |
 
 **命名约定（自本仓库起）：模型按域命名，不按位宽命名** —— 所以不再有
 「Terimage / Binimage」成对出现。`AquariusTerimageExp` 是本系列的**第一个实验**，

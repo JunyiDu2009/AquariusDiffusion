@@ -24,7 +24,7 @@ AquariusDiffusion/
 | Model | Quantizer | Status |
 |---|---|---|
 | [**AquariusTerimageExp**](AquariusImage/AquariusTerimageExp/) | ternary `{−s, 0, +s}`, one fp16 scale per 128 weights + STE | **released** — 558,347,012 params in a single 152.99 MB file (2.192 bpw), bit-exact int4 fused-kernel runtime |
-| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4 (E2M1, per-16 E4M3 scale) · post-training export | **trained** — 48M one-step denoiser, 76K early-stop, 96MB→27.2MB; weights pending release |
+| [**AquariusCodaExp**](AquariusImage/AquariusCodaExp/) | NVFP4 (E2M1, per-16 E4M3 scale) · post-training export | **trained** — 48M one-step denoiser, 76K early-stop, 96MB→27.2MB; weights in [Release v0.1-m2](https://github.com/JunyiDu2009/AquariusDiffusion/releases/tag/v0.1-m2/) |
 
 **Naming convention (from this repo onward):** models are named **by domain, not by
 bit-width** — so there is no separate "Terimage / Binimage" pair. `AquariusTerimageExp`

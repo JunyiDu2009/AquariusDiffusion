@@ -63,8 +63,13 @@ AquariusCodaExp/
 └── results/                   training curves (eval records + gzipped full log)
 ```
 
+## Technical Report
+
+- English (CVPR-style two-column): [docs/report/AquariusCodaExp-Technical-Report-EN.pdf](docs/report/AquariusCodaExp-Technical-Report-EN.pdf)
+- 中文版：[docs/report/AquariusCodaExp-技术报告-中文版.pdf](docs/report/AquariusCodaExp-技术报告-中文版.pdf)
+
 ## Roadmap
 
 - [ ] recalibrate LPIPS acceptance lines
 - [ ] M3: FP8 QAT (torchao)
-- [ ] weight release
+- [x] weights released: [Release v0.1-m2](https://github.com/JunyiDu2009/AquariusDiffusion/releases/tag/v0.1-m2)

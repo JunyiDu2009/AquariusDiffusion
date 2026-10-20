@@ -77,8 +77,13 @@ AquariusCodaExp/
 └── results/                   训练曲线（评估记录 + 全量压缩日志）
 ```
 
+## 技术报告
+
+- 中文版（CVPR 双栏格式）：[docs/report/AquariusCodaExp-技术报告-中文版.pdf](docs/report/AquariusCodaExp-技术报告-中文版.pdf)
+- English: [docs/report/AquariusCodaExp-Technical-Report-EN.pdf](docs/report/AquariusCodaExp-Technical-Report-EN.pdf)
+
 ## 已知问题与路线
 
 - [ ] LPIPS 验收线校准（设计线与实测差距见上表）
 - [ ] M3：FP8 QAT（torchao）
-- [ ] 权重发布（Release）
+- [x] 权重发布：[Release v0.1-m2](https://github.com/JunyiDu2009/AquariusDiffusion/releases/tag/v0.1-m2)
